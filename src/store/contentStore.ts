@@ -128,7 +128,7 @@ const useContentStore = create<ContentState>((set, get) => ({
     set({ isLoadingLive: true, liveError: null });
     try {
       const streams = await xtreamService.getLiveStreams(categoryId);
-      set({ liveStreams: streams, isLoadingLive: false });
+      set({ liveStreams: streams, liveChannels: streams, isLoadingLive: false });
     } catch (error) {
       set({ 
         isLoadingLive: false, 
@@ -216,7 +216,7 @@ const useContentStore = create<ContentState>((set, get) => ({
     set({ isLoadingSeries: true, seriesError: null });
     try {
       const series = await xtreamService.getSeries(categoryId);
-      set({ seriesList: series, isLoadingSeries: false });
+      set({ seriesList: series, series: series, isLoadingSeries: false });
     } catch (error) {
       set({ 
         isLoadingSeries: false, 
@@ -310,7 +310,7 @@ const useContentStore = create<ContentState>((set, get) => ({
       // Add some movies
       const { movies } = get();
       if (movies.length > 0) {
-        const randomMovies = movies
+        const randomMovies = [...movies]
           .sort(() => 0.5 - Math.random())
           .slice(0, 3)
           .map(movie => ({
@@ -324,7 +324,7 @@ const useContentStore = create<ContentState>((set, get) => ({
       // Add some series
       const { seriesList } = get();
       if (seriesList.length > 0) {
-        const randomSeries = seriesList
+        const randomSeries = [...seriesList]
           .sort(() => 0.5 - Math.random())
           .slice(0, 3)
           .map(series => ({
@@ -338,7 +338,7 @@ const useContentStore = create<ContentState>((set, get) => ({
       // Add some live channels
       const { liveStreams } = get();
       if (liveStreams.length > 0) {
-        const randomChannels = liveStreams
+        const randomChannels = [...liveStreams]
           .sort(() => 0.5 - Math.random())
           .slice(0, 2)
           .map(channel => ({
@@ -350,7 +350,7 @@ const useContentStore = create<ContentState>((set, get) => ({
       }
       
       // Shuffle the final list
-      const shuffledFeatured = featured.sort(() => 0.5 - Math.random());
+      const shuffledFeatured = [...featured].sort(() => 0.5 - Math.random());
       
       set({ featuredContent: shuffledFeatured, isLoading: false });
     } catch (error) {

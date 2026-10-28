@@ -11,11 +11,12 @@ import { Channel, LiveCategory } from '../types';
 const LiveTVPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { 
-    fetchLiveCategories, 
-    liveCategories, 
-    liveChannels, 
-    isLoading 
+  const {
+    fetchLiveCategories,
+    fetchLiveStreams,
+    liveCategories,
+    liveChannels,
+    isLoading
   } = useContentStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -23,6 +24,7 @@ const LiveTVPage: React.FC = () => {
   
   useEffect(() => {
     fetchLiveCategories();
+    fetchLiveStreams();
   }, []);
   
   useEffect(() => {

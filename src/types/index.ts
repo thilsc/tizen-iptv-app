@@ -270,6 +270,7 @@ export interface PlaybackHistory {
   backdropUrl?: string;
   seasonNumber?: number;
   episodeNumber?: number;
+  seriesId?: number;
   episodeTitle?: string;
   lastWatched: string; // ISO date string
   completed: boolean;

@@ -4,20 +4,24 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { VideoPlayer } from '../components/content';
 import { Loading } from '../components/ui';
-import { useContentStore, useUserDataStore } from '../store';
+import { useContentStore } from '../store';
 import { Channel } from '../types';
 
 const LiveTVPlayerPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { liveChannels, fetchChannelStream, channelStream, isLoading } = useContentStore();
+  const { liveChannels, fetchLiveStreams, fetchChannelStream, channelStream, isLoading } = useContentStore();
   
   const [channel, setChannel] = useState<Channel | null>(null);
   
   // Find the channel from the store
   useEffect(() => {
-    if (id && liveChannels.length > 0) {
+    if (liveChannels.length === 0) {
+      fetchLiveStreams();
+      return;
+    }
+    if (id) {
       const foundChannel = liveChannels.find(c => c.stream_id.toString() === id);
       if (foundChannel) {
         setChannel(foundChannel);
@@ -55,7 +59,7 @@ const LiveTVPlayerPage: React.FC = () => {
   return (
     <PlayerContainer>
       <VideoPlayer
-        url={channelStream as any}
+        url={channelStream as string}
         title={channel.name}
         subtitle={currentProgram}
         poster={channel.stream_icon}

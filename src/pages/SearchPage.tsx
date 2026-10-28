@@ -88,7 +88,7 @@ const SearchPage: React.FC = () => {
             <SearchInput
               placeholder={t('search.placeholder')}
               value={searchQuery}
-              onChange={e => setSearchQuery(e as any)}
+              onChange={(value) => setSearchQuery(value)}
               autoFocus
             />
           </SearchInputContainer>

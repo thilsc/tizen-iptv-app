@@ -31,7 +31,7 @@ const SeriesCard: React.FC<SeriesCardProps> = ({
   
   // Find any watch history for this series
   const hasWatchHistory = watchHistory.some(
-    item => item.type === 'series' && item.streamId === series.series_id
+    item => item.type === 'series' && (item.seriesId === series.series_id || item.streamId === series.series_id)
   );
   
   return (

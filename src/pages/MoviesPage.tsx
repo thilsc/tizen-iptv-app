@@ -11,11 +11,12 @@ import { Movie, MovieCategory } from '../types';
 const MoviesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { 
-    fetchMovieCategories, 
-    movieCategories, 
-    movies, 
-    isLoading 
+  const {
+    fetchMovieCategories,
+    fetchMovies,
+    movieCategories,
+    movies,
+    isLoading
   } = useContentStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -23,6 +24,7 @@ const MoviesPage: React.FC = () => {
   
   useEffect(() => {
     fetchMovieCategories();
+    fetchMovies();
   }, []);
   
   useEffect(() => {

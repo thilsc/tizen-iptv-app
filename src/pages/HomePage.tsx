@@ -11,11 +11,14 @@ import { Movie, Series, Channel } from '../types';
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { 
+  const {
     fetchFeaturedContent,
     fetchLiveCategories,
     fetchMovieCategories,
     fetchSeriesCategories,
+    fetchLiveStreams,
+    fetchMovies,
+    fetchSeries,
     featuredContent,
     liveChannels,
     movies,
@@ -28,11 +31,19 @@ const HomePage: React.FC = () => {
   const [continueWatching, setContinueWatching] = useState<(Movie | Series)[]>([]);
   
   useEffect(() => {
-    // Fetch all content categories
-    fetchFeaturedContent();
-    fetchLiveCategories();
-    fetchMovieCategories();
-    fetchSeriesCategories();
+    // Fetch all content
+    const loadAll = async () => {
+      await Promise.all([
+        fetchLiveCategories(),
+        fetchMovieCategories(),
+        fetchSeriesCategories(),
+        fetchLiveStreams(),
+        fetchMovies(),
+        fetchSeries(),
+      ]);
+      await fetchFeaturedContent();
+    };
+    loadAll();
   }, []);
   
   // Prepare continue watching list
@@ -56,10 +67,11 @@ const HomePage: React.FC = () => {
       const seriesHistory = watchHistory.filter(
         item => item.type === 'series' && item.position > 0 && item.position < item.duration * 0.95
       );
-      
+
       for (const item of seriesHistory) {
-        const seriesItem = series.find(s => s.series_id === item.streamId);
-        if (seriesItem) {
+        const sid = item.seriesId ?? item.streamId;
+        const seriesItem = series.find(s => s.series_id === sid);
+        if (seriesItem && !watchingItems.some(w => 'series_id' in w && w.series_id === seriesItem.series_id)) {
           watchingItems.push(seriesItem);
         }
       }
@@ -91,11 +103,20 @@ const HomePage: React.FC = () => {
     );
   }
   
+  const heroItems = featuredContent
+    .map((f: { type: string; streamId: number }) => {
+      if (f.type === 'movie') return movies.find(m => m.stream_id === f.streamId);
+      if (f.type === 'series') return series.find(s => s.series_id === f.streamId);
+      if (f.type === 'live') return liveChannels.find(c => c.stream_id === f.streamId);
+      return null;
+    })
+    .filter(Boolean) as (Movie | Series | Channel)[];
+
   return (
     <Layout>
       <HomeContainer>
-        {featuredContent.length > 0 && (
-          <HeroSlider items={featuredContent as any} />
+        {heroItems.length > 0 && (
+          <HeroSlider items={heroItems} />
         )}
         
         {continueWatching.length > 0 && (
@@ -129,7 +150,7 @@ const HomePage: React.FC = () => {
             <Carousel>
               {favorites.map(item => {
                 if (item.type === 'movie') {
-                  const movie = movies.find(m => m.stream_id === item.id);
+                  const movie = movies.find(m => m.stream_id === item.streamId);
                   if (movie) {
                     return (
                       <MovieCard
@@ -141,7 +162,7 @@ const HomePage: React.FC = () => {
                     );
                   }
                 } else if (item.type === 'series') {
-                  const seriesItem = series.find(s => s.series_id === item.id);
+                  const seriesItem = series.find(s => s.series_id === item.streamId);
                   if (seriesItem) {
                     return (
                       <SeriesCard
@@ -153,7 +174,7 @@ const HomePage: React.FC = () => {
                     );
                   }
                 } else if (item.type === 'live') {
-                  const channel = liveChannels.find(c => c.stream_id === item.id);
+                  const channel = liveChannels.find(c => c.stream_id === item.streamId);
                   if (channel) {
                     return (
                       <ChannelCard

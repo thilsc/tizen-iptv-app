@@ -13,14 +13,15 @@ const SeriesDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { 
-    series, 
-    fetchSeriesSeasons, 
-    fetchSeriesEpisodes, 
-    fetchEpisodeStream, 
-    seasons, 
-    episodes, 
-    episodeStream, 
-    isLoading 
+    series,
+    fetchSeries,
+    fetchSeriesSeasons,
+    fetchSeriesEpisodes,
+    fetchEpisodeStream,
+    seasons,
+    episodes,
+    episodeStream,
+    isLoading
   } = useContentStore();
   const { fetchSeriesDetails, seriesDetails } = useTmdbStore();
   const { addToFavorites, removeFromFavorites, favorites } = useUserDataStore();
@@ -33,6 +34,12 @@ const SeriesDetailPage: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   
+  useEffect(() => {
+    if (series.length === 0) {
+      fetchSeries();
+    }
+  }, [series.length]);
+
   // Find the series from the store
   useEffect(() => {
     if (id && series.length > 0) {
@@ -41,7 +48,7 @@ const SeriesDetailPage: React.FC = () => {
         setSeriesData(foundSeries);
         
         // Check if it's in favorites
-        const isFav = favorites.some(f => f.type === 'series' && f.id === foundSeries.series_id);
+        const isFav = favorites.some(f => f.type === 'series' && f.streamId === foundSeries.series_id);
         setIsFavorite(isFav);
         
         // Fetch seasons
@@ -74,7 +81,8 @@ const SeriesDetailPage: React.FC = () => {
     if (!seriesData) return;
     
     if (isFavorite) {
-      removeFavorite(seriesData.series_id);
+      const fav = favorites.find(f => f.type === 'series' && f.streamId === seriesData.series_id);
+      if (fav) removeFavorite(fav.id);
     } else {
       addFavorite({
         type: 'series',
@@ -88,9 +96,9 @@ const SeriesDetailPage: React.FC = () => {
   };
   
   // Handle episode selection
-  const handleEpisodeClick = (episode: Episode) => {
+  const handleEpisodeClick = async (episode: Episode) => {
     setSelectedEpisode(episode);
-    fetchEpisodeStream(episode.id);
+    await fetchEpisodeStream(episode.id);
     setIsPlaying(true);
   };
   
@@ -124,13 +132,14 @@ const SeriesDetailPage: React.FC = () => {
     return (
       <VideoPlayerContainer>
         <VideoPlayer
-          url={episodeStream as any}
+          url={episodeStream as string}
           title={seriesData.name}
           subtitle={`S${selectedEpisode.season_number} E${selectedEpisode.episode_num}: ${selectedEpisode.title}`}
           poster={selectedEpisode.info?.movie_image || seriesData.cover}
           onBack={handleBack}
           contentType="series"
           streamId={selectedEpisode.id}
+          seriesId={seriesData.series_id}
           seasonNumber={selectedEpisode.season_number}
           episodeNumber={selectedEpisode.episode_num}
         />

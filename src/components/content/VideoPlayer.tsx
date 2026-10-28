@@ -15,6 +15,7 @@ interface VideoPlayerProps {
   onEnded?: () => void;
   contentType?: 'movie' | 'series' | 'live';
   streamId?: number;
+  seriesId?: number;
   seasonNumber?: number;
   episodeNumber?: number;
   drmInfo?: {
@@ -34,6 +35,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onEnded,
   contentType,
   streamId,
+  seriesId,
   seasonNumber,
   episodeNumber,
   drmInfo,
@@ -57,8 +59,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     availableAudioTracks,
     currentAudioTrack,
     loadSource,
-    play,
-    pause,
     togglePlay,
     seek,
     seekRelative,
@@ -69,10 +69,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   } = usePlayer({
     autoPlay,
     startPosition,
+    title,
     onEnded,
     saveProgress: contentType !== 'live',
     contentType,
     streamId,
+    seriesId,
     seasonNumber,
     episodeNumber
   });

@@ -22,13 +22,18 @@ class XtreamService {
   }
 
   private loadCredentials(): void {
-    const credentials = localStorage.getItem('xtream_credentials');
-    if (credentials) {
-      const { server, username, password } = JSON.parse(credentials);
-      this.baseUrl = server;
-      this.username = username;
-      this.password = password;
-      this.isAuthenticated = true;
+    try {
+      const credentials = localStorage.getItem('xtream_credentials');
+      if (credentials) {
+        const { server, username, password } = JSON.parse(credentials);
+        this.baseUrl = server;
+        this.username = username;
+        this.password = password;
+        this.isAuthenticated = true;
+      }
+    } catch (error) {
+      console.error('Failed to load stored credentials:', error);
+      localStorage.removeItem('xtream_credentials');
     }
   }
 

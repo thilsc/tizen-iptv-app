@@ -44,7 +44,8 @@
     "loading": "Yükleniyor...",
     "error": "Oynatma hatası",
     "retry": "Tekrar Dene",
-    "watchTrailer": "Fragmanı İzle"
+    "watchTrailer": "Fragmanı İzle",
+    "subtitlesOff": "Kapalı"
   },
   "content": {
     "cast": "Oyuncular",
@@ -82,7 +83,16 @@
     "about": "Hakkında",
     "version": "Versiyon",
     "clearData": "Verileri Temizle",
-    "clearDataConfirm": "Tüm kullanıcı verilerini silmek istediğinizden emin misiniz?"
+    "clearDataConfirm": "Tüm kullanıcı verilerini silmek istediğinizden emin misiniz?",
+    "account": "Hesap",
+    "appearance": "Görünüm",
+    "darkTheme": "Koyu",
+    "developer": "Geliştirici",
+    "enableParentalControl": "Ebeveyn Kontrolünü Etkinleştir",
+    "lightTheme": "Açık",
+    "logout": "Çıkış Yap",
+    "logoutButton": "Çıkış Yap",
+    "parentalControlPin": "Ebeveyn Kontrolü PIN'i"
   },
   "profile": {
     "title": "Profil",
@@ -115,5 +125,58 @@
     "back": "Geri",
     "continue": "Devam Et",
     "seeAll": "Tümünü Gör"
+  },
+  "actions": {
+    "addToFavorites": "Favorilere Ekle",
+    "back": "Geri",
+    "moreInfo": "Daha Fazla Bilgi",
+    "play": "Oynat",
+    "removeFromFavorites": "Favorilerden Çıkar",
+    "watch": "İzle"
+  },
+  "home": {
+    "continueWatching": "İzlemeye Devam Et",
+    "favorites": "Favoriler",
+    "liveTV": "Canlı TV",
+    "movies": "Filmler",
+    "series": "Diziler"
+  },
+  "liveTV": {
+    "allChannels": "Tüm Kanallar",
+    "noChannels": "Kanal bulunamadı",
+    "streamError": "Yayın alınamadı",
+    "title": "Canlı TV"
+  },
+  "movieDetail": {
+    "cast": "Oyuncular",
+    "noDescription": "Açıklama bulunmuyor",
+    "similar": "Benzer Filmler"
+  },
+  "movies": {
+    "allMovies": "Tüm Filmler",
+    "noMovies": "Film bulunamadı",
+    "title": "Filmler"
+  },
+  "search": {
+    "channelsResults": "Kanallar",
+    "enterQuery": "Arama terimi girin",
+    "moviesResults": "Filmler",
+    "noResults": "Sonuç bulunamadı",
+    "placeholder": "Ara...",
+    "seriesResults": "Diziler",
+    "title": "Ara"
+  },
+  "series": {
+    "allSeries": "Tüm Diziler",
+    "noSeries": "Dizi bulunamadı",
+    "title": "Diziler"
+  },
+  "seriesDetail": {
+    "cast": "Oyuncular",
+    "episodes": "Bölümler",
+    "noDescription": "Açıklama bulunmuyor",
+    "noEpisodes": "Bölüm bulunamadı",
+    "season": "Sezon",
+    "seasons": "Sezonlar"
   }
 }

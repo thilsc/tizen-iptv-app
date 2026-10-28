@@ -13,7 +13,7 @@ const MovieDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { movies, fetchMovieStream, movieStream, isLoading } = useContentStore();
+  const { movies, fetchMovies, fetchMovieStream, movieStream, isLoading } = useContentStore();
   const { fetchMovieDetails, movieDetails } = useTmdbStore();
   const { addToFavorites, removeFromFavorites, favorites } = useUserDataStore();
   const addFavorite = addToFavorites;
@@ -24,6 +24,12 @@ const MovieDetailPage: React.FC = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [similarMovies, setSimilarMovies] = useState<Movie[]>([]);
   
+  useEffect(() => {
+    if (movies.length === 0) {
+      fetchMovies();
+    }
+  }, [movies.length]);
+
   // Find the movie from the store
   useEffect(() => {
     if (id && movies.length > 0) {
@@ -32,7 +38,7 @@ const MovieDetailPage: React.FC = () => {
         setMovie(foundMovie);
         
         // Check if it's in favorites
-        const isFav = favorites.some(f => f.type === 'movie' && f.id === foundMovie.stream_id);
+        const isFav = favorites.some(f => f.type === 'movie' && f.streamId === foundMovie.stream_id);
         setIsFavorite(isFav);
         
         // Find similar movies (same category)
@@ -50,9 +56,9 @@ const MovieDetailPage: React.FC = () => {
   }, [id, movies, favorites]);
   
   // Fetch stream when play is clicked
-  const handlePlay = () => {
+  const handlePlay = async () => {
     if (movie) {
-      fetchMovieStream(movie.stream_id);
+      await fetchMovieStream(movie.stream_id);
       setIsPlaying(true);
     }
   };
@@ -62,7 +68,8 @@ const MovieDetailPage: React.FC = () => {
     if (!movie) return;
     
     if (isFavorite) {
-      removeFavorite(movie.stream_id);
+      const fav = favorites.find(f => f.type === 'movie' && f.streamId === movie.stream_id);
+      if (fav) removeFavorite(fav.id);
     } else {
       addFavorite({
         type: 'movie',
@@ -104,7 +111,7 @@ const MovieDetailPage: React.FC = () => {
     return (
       <VideoPlayerContainer>
         <VideoPlayer
-          url={movieStream as any}
+          url={movieStream as string}
           title={movie.name}
           poster={movie.cover || movie.stream_icon}
           onBack={handleBack}

@@ -13,41 +13,49 @@ interface TabsProps {
   onChange: (tabId: string) => void;
 }
 
+const TabItemComponent: React.FC<{
+  tab: Tab;
+  isActive: boolean;
+  onSelect: (id: string) => void;
+}> = ({ tab, isActive, onSelect }) => {
+  const { ref, isFocused } = useFocusable({
+    onEnter: () => onSelect(tab.id),
+  });
+
+  return (
+    <TabItem
+      ref={ref as React.RefObject<HTMLDivElement>}
+      active={isActive}
+      focused={isFocused}
+      onClick={() => onSelect(tab.id)}
+    >
+      {tab.label}
+    </TabItem>
+  );
+};
+
 const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange }) => {
   const [selectedTab, setSelectedTab] = useState(activeTab);
-  
-  // Update selected tab when activeTab prop changes
+
   useEffect(() => {
     setSelectedTab(activeTab);
   }, [activeTab]);
-  
-  // Handle tab selection
+
   const handleTabClick = (tabId: string) => {
     setSelectedTab(tabId);
     onChange(tabId);
   };
-  
+
   return (
     <TabsContainer>
-      {tabs.map((tab) => {
-        const { ref, isFocused } = useFocusable({
-          onEnter: () => handleTabClick(tab.id),
-        });
-        
-        const isActive = tab.id === selectedTab;
-        
-        return (
-          <TabItem
-            key={tab.id}
-            ref={ref as React.RefObject<HTMLDivElement>}
-            active={isActive}
-            focused={isFocused}
-            onClick={() => handleTabClick(tab.id)}
-          >
-            {tab.label}
-          </TabItem>
-        );
-      })}
+      {tabs.map((tab) => (
+        <TabItemComponent
+          key={tab.id}
+          tab={tab}
+          isActive={tab.id === selectedTab}
+          onSelect={handleTabClick}
+        />
+      ))}
     </TabsContainer>
   );
 };
@@ -70,11 +78,11 @@ const TabItem = styled.div<{ active: boolean; focused: boolean }>`
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  
+
   &:hover {
     color: var(--color-primary);
   }
-  
+
   ${({ focused }) =>
     focused &&
     `

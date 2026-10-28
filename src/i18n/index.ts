@@ -22,26 +22,23 @@ i18n
     }
   });
 
-// We'll set up the subscription to settings store after initialization
+// Set up subscription to settings store after initialization
 // to avoid circular dependency issues
 setTimeout(() => {
-  // Import here to avoid circular dependency
-  const { useSettingsStore } = require('../store');
-  
-  // Set initial language from settings if available
-  const initialLang = useSettingsStore.getState().language;
-  if (initialLang && i18n.language !== initialLang) {
-    i18n.changeLanguage(initialLang);
-  }
-  
-  // Listen for language changes in the settings store
-  useSettingsStore.subscribe(
-    (state) => {
+  import('../store').then(({ useSettingsStore }) => {
+    const initialLang = useSettingsStore.getState().language;
+    if (initialLang && i18n.language !== initialLang) {
+      i18n.changeLanguage(initialLang);
+    }
+
+    useSettingsStore.subscribe((state) => {
       if (i18n.language !== state.language) {
         i18n.changeLanguage(state.language);
       }
-    }
-  );
+    });
+  }).catch((error) => {
+    console.error('Failed to load settings store for i18n:', error);
+  });
 }, 0);
 
 export default i18n;

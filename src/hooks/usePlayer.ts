@@ -1,14 +1,16 @@
 import { useRef, useState, useEffect } from 'react';
-// @ts-ignore
+// @ts-expect-error shaka-player has no type declarations
 import shaka from 'shaka-player';
 import { useUserDataStore } from '../store';
 
 interface PlayerOptions {
   autoPlay?: boolean;
   startPosition?: number;
+  title?: string;
+  seriesId?: number;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
   onEnded?: () => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
   onPlay?: () => void;
   onPause?: () => void;
   onLoadStart?: () => void;
@@ -27,6 +29,8 @@ export const usePlayer = (options: PlayerOptions = {}) => {
   const {
     autoPlay = true,
     startPosition = 0,
+    title,
+    seriesId,
     onTimeUpdate,
     onEnded,
     onError,
@@ -59,7 +63,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
   const [availableAudioTracks, setAvailableAudioTracks] = useState<{ id: string; language: string }[]>([]);
   const [currentAudioTrack, setCurrentAudioTrack] = useState<string | null>(null);
   
-  const { addToWatchHistory, updateWatchProgress } = useUserDataStore();
+  const { addToWatchHistory } = useUserDataStore();
   
   // Initialize Shaka Player
   useEffect(() => {
@@ -142,17 +146,16 @@ export const usePlayer = (options: PlayerOptions = {}) => {
           const historyItem = {
             type: contentType,
             streamId,
+            name: title || 'Unknown',
             position: video.currentTime,
             duration: video.duration,
             seasonNumber,
             episodeNumber,
+            seriesId,
             completed: false
           };
           
-          addToWatchHistory({
-            ...historyItem,
-            name: 'Unknown' // Adding required name property
-          });
+          addToWatchHistory(historyItem);
         }
       }
     };
@@ -176,17 +179,16 @@ export const usePlayer = (options: PlayerOptions = {}) => {
         const historyItem = {
           type: contentType,
           streamId,
+          name: title || 'Unknown',
           position: video.duration || 0,
           duration: video.duration || 0,
           seasonNumber,
           episodeNumber,
+          seriesId,
           completed: true
         };
-        
-        addToWatchHistory({
-          ...historyItem,
-          name: 'Unknown' // Adding required name property
-        });
+
+        addToWatchHistory(historyItem);
       }
       
       if (onEnded) onEnded();

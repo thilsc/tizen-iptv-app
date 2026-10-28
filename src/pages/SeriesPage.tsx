@@ -11,11 +11,12 @@ import { Series, SeriesCategory } from '../types';
 const SeriesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { 
-    fetchSeriesCategories, 
-    seriesCategories, 
-    series, 
-    isLoading 
+  const {
+    fetchSeriesCategories,
+    fetchSeries,
+    seriesCategories,
+    series,
+    isLoading
   } = useContentStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -23,6 +24,7 @@ const SeriesPage: React.FC = () => {
   
   useEffect(() => {
     fetchSeriesCategories();
+    fetchSeries();
   }, []);
   
   useEffect(() => {

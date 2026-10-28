@@ -36,12 +36,12 @@ const ChannelCard: React.FC<ChannelCardProps> = ({
           <EpgInfo>
             <EpgTitle>
               {epg_now.title}
-              <EpgTime>{epg_now.start ? formatTime(parseInt(epg_now.start)) : ''} - {epg_now.end ? formatTime(parseInt(epg_now.end)) : ''}</EpgTime>
+              <EpgTime>{epg_now.start_timestamp ? formatTime(epg_now.start_timestamp) : ''} - {epg_now.stop_timestamp ? formatTime(epg_now.stop_timestamp) : ''}</EpgTime>
             </EpgTitle>
             {epg_next && (
               <EpgNext>
                 {epg_next.title}
-                <EpgTime>{epg_next.start ? formatTime(parseInt(epg_next.start)) : ''} - {epg_next.end ? formatTime(parseInt(epg_next.end)) : ''}</EpgTime>
+                <EpgTime>{epg_next.start_timestamp ? formatTime(epg_next.start_timestamp) : ''} - {epg_next.stop_timestamp ? formatTime(epg_next.stop_timestamp) : ''}</EpgTime>
               </EpgNext>
             )}
           </EpgInfo>

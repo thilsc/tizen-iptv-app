@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useFocusable } from '../../hooks';
+
 import { useAuthStore } from '../../store';
 
 interface NavbarProps {

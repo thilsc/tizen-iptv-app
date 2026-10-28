@@ -32,7 +32,7 @@ const SettingsPage: React.FC = () => {
   
   // Handle parental control toggle
   const handleParentalControlToggle = () => {
-    setParentalControl(!parentalControl);
+    setParentalControl(!parentalControl.enabled);
   };
   
   // Handle PIN change
@@ -112,7 +112,7 @@ const SettingsPage: React.FC = () => {
               </SettingControls>
             </SettingItem>
             
-            {parentalControl && (
+            {parentalControl.enabled && (
               <SettingItem>
                 <SettingLabel>{t('settings.parentalControlPin')}</SettingLabel>
                 <SettingControls>

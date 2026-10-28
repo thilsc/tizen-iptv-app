@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
             label={t('auth.server')}
             placeholder={t('auth.serverPlaceholder')}
             value={serverUrl}
-            onChange={e => setServerUrl(e as any)}
+            onChange={(value) => setServerUrl(value)}
             onKeyDown={handleKeyDown}
             autoFocus
           />
@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
             label={t('auth.username')}
             placeholder={t('auth.usernamePlaceholder')}
             value={username}
-            onChange={e => setUsername(e as any)}
+            onChange={(value) => setUsername(value)}
             onKeyDown={handleKeyDown}
           />
           
@@ -57,7 +57,7 @@ const LoginPage: React.FC = () => {
             placeholder={t('auth.passwordPlaceholder')}
             type="password"
             value={password}
-            onChange={e => setPassword(e as any)}
+            onChange={(value) => setPassword(value)}
             onKeyDown={handleKeyDown}
           />
           

@@ -44,7 +44,8 @@
     "loading": "Loading...",
     "error": "Playback error",
     "retry": "Retry",
-    "watchTrailer": "Watch Trailer"
+    "watchTrailer": "Watch Trailer",
+    "subtitlesOff": "Off"
   },
   "content": {
     "cast": "Cast",
@@ -82,7 +83,16 @@
     "about": "About",
     "version": "Version",
     "clearData": "Clear Data",
-    "clearDataConfirm": "Are you sure you want to clear all user data?"
+    "clearDataConfirm": "Are you sure you want to clear all user data?",
+    "account": "Account",
+    "appearance": "Appearance",
+    "darkTheme": "Dark",
+    "developer": "Developer",
+    "enableParentalControl": "Enable Parental Control",
+    "lightTheme": "Light",
+    "logout": "Logout",
+    "logoutButton": "Logout",
+    "parentalControlPin": "Parental Control PIN"
   },
   "profile": {
     "title": "Profile",
@@ -115,5 +125,58 @@
     "back": "Back",
     "continue": "Continue",
     "seeAll": "See All"
+  },
+  "actions": {
+    "addToFavorites": "Add to Favorites",
+    "back": "Back",
+    "moreInfo": "More Info",
+    "play": "Play",
+    "removeFromFavorites": "Remove from Favorites",
+    "watch": "Watch"
+  },
+  "home": {
+    "continueWatching": "Continue Watching",
+    "favorites": "Favorites",
+    "liveTV": "Live TV",
+    "movies": "Movies",
+    "series": "Series"
+  },
+  "liveTV": {
+    "allChannels": "All Channels",
+    "noChannels": "No channels available",
+    "streamError": "Stream could not be loaded",
+    "title": "Live TV"
+  },
+  "movieDetail": {
+    "cast": "Cast",
+    "noDescription": "No description available",
+    "similar": "Similar Movies"
+  },
+  "movies": {
+    "allMovies": "All Movies",
+    "noMovies": "No movies available",
+    "title": "Movies"
+  },
+  "search": {
+    "channelsResults": "Channels",
+    "enterQuery": "Enter a search term",
+    "moviesResults": "Movies",
+    "noResults": "No results found",
+    "placeholder": "Search...",
+    "seriesResults": "Series",
+    "title": "Search"
+  },
+  "series": {
+    "allSeries": "All Series",
+    "noSeries": "No series available",
+    "title": "Series"
+  },
+  "seriesDetail": {
+    "cast": "Cast",
+    "episodes": "Episodes",
+    "noDescription": "No description available",
+    "noEpisodes": "No episodes available",
+    "season": "Season",
+    "seasons": "Seasons"
   }
 }

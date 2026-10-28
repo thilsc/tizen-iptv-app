@@ -24,7 +24,7 @@ class TMDBService {
   // Search for movies
   public async searchMovies(query: string, year?: string, language: string = 'tr-TR'): Promise<TMDBMovie[]> {
     try {
-      const params: any = {
+      const params: Record<string, unknown> = {
         query,
         language,
         include_adult: false,
@@ -45,7 +45,7 @@ class TMDBService {
   // Search for TV shows/series
   public async searchSeries(query: string, year?: string, language: string = 'tr-TR'): Promise<TMDBSeries[]> {
     try {
-      const params: any = {
+      const params: Record<string, unknown> = {
         query,
         language,
         include_adult: false,
@@ -141,7 +141,7 @@ class TMDBService {
   }
 
   // Get movie videos (trailers)
-  public async getMovieVideos(movieId: number, language: string = 'tr-TR'): Promise<any[]> {
+  public async getMovieVideos(movieId: number, language: string = 'tr-TR'): Promise<unknown[]> {
     try {
       const response = await this.api.get(`/movie/${movieId}/videos`, {
         params: {
@@ -156,7 +156,7 @@ class TMDBService {
   }
 
   // Get TV show videos (trailers)
-  public async getTVShowVideos(tvId: number, language: string = 'tr-TR'): Promise<any[]> {
+  public async getTVShowVideos(tvId: number, language: string = 'tr-TR'): Promise<unknown[]> {
     try {
       const response = await this.api.get(`/tv/${tvId}/videos`, {
         params: {
@@ -171,7 +171,7 @@ class TMDBService {
   }
   
   // Alias for backward compatibility
-  public async getSeriesVideos(seriesId: number, language: string = 'tr-TR'): Promise<any[]> {
+  public async getSeriesVideos(seriesId: number, language: string = 'tr-TR'): Promise<unknown[]> {
     return this.getTVShowVideos(seriesId, language);
   }
 
