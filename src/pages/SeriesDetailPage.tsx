@@ -24,7 +24,7 @@ const SeriesDetailPage: React.FC = () => {
     isLoading
   } = useContentStore();
   const { fetchSeriesDetails, seriesDetails, isLoading: isTmdbLoading } = useTmdbStore();
-  const { addToFavorites, removeFromFavorites, favorites } = useUserDataStore();
+  const { addToFavorites, removeFromFavorites, favorites, watchHistory } = useUserDataStore();
   const addFavorite = addToFavorites;
   const removeFavorite = removeFromFavorites;
   
@@ -142,6 +142,16 @@ const SeriesDetailPage: React.FC = () => {
           seriesId={seriesData.series_id}
           seasonNumber={selectedEpisode.season_number}
           episodeNumber={selectedEpisode.episode_num}
+          startPosition={
+            watchHistory.find(
+              h =>
+                h.type === 'series' &&
+                h.streamId === selectedEpisode.id &&
+                h.seasonNumber === selectedEpisode.season_number &&
+                h.episodeNumber === selectedEpisode.episode_num &&
+                !h.completed
+            )?.position || 0
+          }
         />
       </VideoPlayerContainer>
     );
@@ -221,7 +231,8 @@ const SeriesDetailPage: React.FC = () => {
                         {person.profile_path && (
                           <CastImage 
                             src={`https://image.tmdb.org/t/p/w200${person.profile_path}`} 
-                            alt={person.name} 
+                            alt={person.name}
+                            loading="lazy"
                           />
                         )}
                         <CastName>{person.name}</CastName>

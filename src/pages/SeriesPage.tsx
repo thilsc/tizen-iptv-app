@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { SeriesCard } from '../components/content';
-import { Loading, Tabs, Grid } from '../components/ui';
+import { Loading, Tabs, Grid, Button } from '../components/ui';
 import { useContentStore, useSettingsStore } from '../store';
 import { Series, SeriesCategory } from '../types';
 
@@ -12,22 +12,16 @@ const SeriesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    fetchSeriesCategories,
     fetchSeries,
     seriesCategories,
     series,
-    isLoading
+    isLoading,
+    seriesError
   } = useContentStore();
   const { isContentBlocked } = useSettingsStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredSeries, setFilteredSeries] = useState<Series[]>([]);
-  
-  useEffect(() => {
-    fetchSeriesCategories();
-    fetchSeries();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   
   useEffect(() => {
     if (seriesCategories.length > 0 && !selectedCategory) {
@@ -91,7 +85,12 @@ const SeriesPage: React.FC = () => {
           onChange={handleCategoryChange}
         />
         
-        {visibleSeries.length > 0 ? (
+        {seriesError ? (
+          <ErrorState>
+            <span>{seriesError}</span>
+            <Button variant="primary" onClick={() => fetchSeries()}>{t('common.retry')}</Button>
+          </ErrorState>
+        ) : visibleSeries.length > 0 ? (
           <Grid columns={5} gap={16}>
             {visibleSeries.map((seriesItem, index) => (
               <SeriesCard
@@ -129,6 +128,17 @@ const LoadingContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
+`;
+
+const ErrorState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px;
+  text-align: center;
+  color: var(--color-error);
+  font-size: 16px;
 `;
 
 const NoSeries = styled.div`

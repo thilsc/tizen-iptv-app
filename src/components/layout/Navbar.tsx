@@ -2,12 +2,32 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useFocusable } from '../../hooks';
 
 import { useAuthStore } from '../../store';
 
 interface NavbarProps {
   className?: string;
 }
+
+const FocusableNavItem: React.FC<{
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}> = ({ label, active, onClick }) => {
+  const { ref, isFocused } = useFocusable({ onEnter: onClick });
+
+  return (
+    <NavItem
+      ref={ref as React.RefObject<HTMLDivElement>}
+      active={active}
+      focused={isFocused}
+      onClick={onClick}
+    >
+      {label}
+    </NavItem>
+  );
+};
 
 const Navbar: React.FC<NavbarProps> = ({ className }) => {
   const { t } = useTranslation();
@@ -43,13 +63,12 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
       
       <NavItems>
         {navItems.map((item, index) => (
-          <NavItem
+          <FocusableNavItem
             key={index}
+            label={item.label}
             active={location.pathname === item.path}
             onClick={() => navigate(item.path)}
-          >
-            {item.label}
-          </NavItem>
+          />
         ))}
       </NavItems>
       
@@ -115,6 +134,7 @@ const NavItems = styled.div`
 
 interface NavItemProps {
   active: boolean;
+  focused: boolean;
 }
 
 const NavItem = styled.div<NavItemProps>`
@@ -134,6 +154,12 @@ const NavItem = styled.div<NavItemProps>`
     background-color: rgba(var(--color-primary-rgb), 0.1);
     outline: none;
   }
+
+  ${props => props.focused && css`
+    background-color: rgba(var(--color-primary-rgb), 0.15);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  `}
 `;
 
 const RightSection = styled.div`

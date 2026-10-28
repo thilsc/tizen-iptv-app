@@ -2,7 +2,6 @@ import axios from 'axios';
 import { TMDBMovie, TMDBSeries, TMDBCast, TmdbMovieDetails, TmdbSeriesDetails } from '../types';
 
 class TMDBService {
-  private readonly API_KEY = (import.meta as { env?: Record<string, string> }).env?.VITE_TMDB_API_KEY || '';
   private readonly ACCESS_TOKEN = (import.meta as { env?: Record<string, string> }).env?.VITE_TMDB_ACCESS_TOKEN || '';
   private readonly BASE_URL = 'https://api.themoviedb.org/3';
   private readonly IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';

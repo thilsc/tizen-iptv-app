@@ -144,33 +144,33 @@ Nenhum bug funcional pendente. Itens de melhoria de baixa severidade foram trata
 ## 7. Pontos de melhoria
 
 ### 7.1 Qualidade de código
-- Habilitar `strict: true` e corrigir erros resultantes.
-- Reduzir `any` (ainda presente em alguns handlers).
-- Resolver avisos de dependências de `useEffect`.
-- Remover fallback hardcoded de chaves TMDB.
+- ✅ Habilitar `strict: true` e corrigir erros resultantes.
+- ✅ Reduzir `any` (nenhuma ocorrência restante em `src`).
+- ✅ Resolver avisos de dependências de `useEffect` (lint 0 avisos).
+- ✅ Remover fallback hardcoded de chaves TMDB.
 
 ### 7.2 Performance
-- Code-splitting: chunk `player` tem ~714KB.
-- `fetchFeaturedContent` recalcula a cada visita; cachear.
-- Lazy loading de imagens e tamanhos TMDB adequados.
+- ✅ Code-splitting com `React.lazy`/`Suspense`; player em chunk separado.
+- ✅ `fetchFeaturedContent` com cache em memória (não recalcula a cada visita).
+- ✅ Lazy loading de imagens e tamanhos TMDB adequados.
 
 ### 7.3 Segurança
-- Mover credenciais TMDB totalmente para env (sem fallback).
-- Evitar persistir senha em texto plano no `localStorage`.
+- ✅ Credenciais TMDB lidas de env (sem fallback hardcoded).
+- ✅ Senha não é mais persistida em texto plano no `localStorage` (ofuscada).
 
 ### 7.4 UX / TV
-- Restaurar foco/scroll ao navegar.
-- Indicador de foco consistente em todos os componentes.
-- Estados vazios/erro com retry em todas as páginas.
-- Suporte ao botão Back do controle remoto em todas as telas.
+- ✅ Scroll restaurado/redefinido ao navegar (`ScrollToTop`).
+- ✅ Indicador de foco consistente (Navbar e carrossel).
+- ✅ Estados de erro com retry em Filmes/Séries/TV ao vivo.
+- ✅ Botão Back do controle remoto (10009/Escape) em todas as telas com Layout.
 
 ### 7.5 Dados / estado
-- Centralizar fetch inicial ao autenticar.
-- Restaurar `startPosition` do histórico no player.
+- ✅ Fetch inicial centralizado no `App` após autenticação.
+- ✅ `startPosition` restaurado do histórico no player (filmes e episódios).
 
 ### 7.6 Tizen / build
-- Validar `config.xml` e perfil alvo.
-- Remover `dist.zip` do versionamento (opcional).
+- ✅ `config.xml` validado (XML e `icon.png`).
+- ✅ `dist.zip` e `config_new.xml` removidos; artefatos no `.gitignore`.
 
 ---
 

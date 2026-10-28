@@ -12,13 +12,6 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    fetchFeaturedContent,
-    fetchLiveCategories,
-    fetchMovieCategories,
-    fetchSeriesCategories,
-    fetchLiveStreams,
-    fetchMovies,
-    fetchSeries,
     featuredContent,
     liveChannels,
     movies,
@@ -29,24 +22,7 @@ const HomePage: React.FC = () => {
   const { watchHistory, favorites } = useUserDataStore();
   
   const [continueWatching, setContinueWatching] = useState<(Movie | Series)[]>([]);
-  
-  useEffect(() => {
-    // Fetch all content
-    const loadAll = async () => {
-      await Promise.all([
-        fetchLiveCategories(),
-        fetchMovieCategories(),
-        fetchSeriesCategories(),
-        fetchLiveStreams(),
-        fetchMovies(),
-        fetchSeries(),
-      ]);
-      await fetchFeaturedContent();
-    };
-    loadAll();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  
+
   // Prepare continue watching list
   useEffect(() => {
     if (watchHistory.length > 0) {

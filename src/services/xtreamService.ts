@@ -10,6 +10,22 @@ import {
   UserProfile
 } from '../types';
 
+const CREDENTIALS_KEY = 'xtream_credentials';
+const OBFUSCATION_KEY = 'tizen-iptv-app::local';
+
+const xorString = (input: string): string =>
+  Array.from(input)
+    .map((char, index) =>
+      String.fromCharCode(char.charCodeAt(0) ^ OBFUSCATION_KEY.charCodeAt(index % OBFUSCATION_KEY.length))
+    )
+    .join('');
+
+const encodeCredentials = (credentials: { server: string; username: string; password: string }): string =>
+  btoa(encodeURIComponent(xorString(JSON.stringify(credentials))));
+
+const decodeCredentials = (value: string): { server: string; username: string; password: string } =>
+  JSON.parse(decodeURIComponent(xorString(atob(value))));
+
 class XtreamService {
   private baseUrl: string = '';
   private username: string = '';
@@ -23,9 +39,16 @@ class XtreamService {
 
   private loadCredentials(): void {
     try {
-      const credentials = localStorage.getItem('xtream_credentials');
-      if (credentials) {
-        const { server, username, password } = JSON.parse(credentials);
+      const stored = localStorage.getItem(CREDENTIALS_KEY);
+      if (stored) {
+        let parsed: { server: string; username: string; password: string };
+        try {
+          // Backward compatibility with previously stored plaintext credentials
+          parsed = JSON.parse(stored);
+        } catch {
+          parsed = decodeCredentials(stored);
+        }
+        const { server, username, password } = parsed;
         this.baseUrl = server;
         this.username = username;
         this.password = password;
@@ -33,7 +56,7 @@ class XtreamService {
       }
     } catch (error) {
       console.error('Failed to load stored credentials:', error);
-      localStorage.removeItem('xtream_credentials');
+      localStorage.removeItem(CREDENTIALS_KEY);
     }
   }
 
@@ -44,9 +67,9 @@ class XtreamService {
     this.isAuthenticated = true;
 
     if (persist) {
-      localStorage.setItem('xtream_credentials', JSON.stringify({ server, username, password }));
+      localStorage.setItem(CREDENTIALS_KEY, encodeCredentials({ server, username, password }));
     } else {
-      localStorage.removeItem('xtream_credentials');
+      localStorage.removeItem(CREDENTIALS_KEY);
     }
   }
 

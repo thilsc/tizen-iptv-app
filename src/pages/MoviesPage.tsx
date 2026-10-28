@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { MovieCard } from '../components/content';
-import { Loading, Tabs, Grid } from '../components/ui';
+import { Loading, Tabs, Grid, Button } from '../components/ui';
 import { useContentStore, useSettingsStore } from '../store';
 import { Movie, MovieCategory } from '../types';
 
@@ -12,22 +12,16 @@ const MoviesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    fetchMovieCategories,
     fetchMovies,
     movieCategories,
     movies,
-    isLoading
+    isLoading,
+    moviesError
   } = useContentStore();
   const { isContentBlocked } = useSettingsStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
-  
-  useEffect(() => {
-    fetchMovieCategories();
-    fetchMovies();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   
   useEffect(() => {
     if (movieCategories.length > 0 && !selectedCategory) {
@@ -91,7 +85,12 @@ const MoviesPage: React.FC = () => {
           onChange={handleCategoryChange}
         />
         
-        {visibleMovies.length > 0 ? (
+        {moviesError ? (
+          <ErrorState>
+            <span>{moviesError}</span>
+            <Button variant="primary" onClick={() => fetchMovies()}>{t('common.retry')}</Button>
+          </ErrorState>
+        ) : visibleMovies.length > 0 ? (
           <Grid columns={5} gap={16}>
             {visibleMovies.map((movie, index) => (
               <MovieCard
@@ -129,6 +128,17 @@ const LoadingContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
+`;
+
+const ErrorState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px;
+  text-align: center;
+  color: var(--color-error);
+  font-size: 16px;
 `;
 
 const NoMovies = styled.div`

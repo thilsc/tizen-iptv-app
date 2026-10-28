@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useAuthStore } from '../../store';
 
@@ -10,7 +11,28 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children, hideNavbar = false }) => {
   const { isAuthenticated } = useAuthStore();
-  
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const handleBack = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      const isEditing = target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA';
+      if (isEditing) return;
+
+      // Tizen TV back key (10009) and Escape
+      if (event.keyCode === 10009 || event.keyCode === 27) {
+        if (pathname !== '/') {
+          event.preventDefault();
+          navigate(-1);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleBack);
+    return () => window.removeEventListener('keydown', handleBack);
+  }, [navigate, pathname]);
+
   return (
     <LayoutContainer>
       {isAuthenticated && !hideNavbar && <Navbar />}

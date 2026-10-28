@@ -15,7 +15,7 @@ const MovieDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { movies, fetchMovies, fetchMovieStream, movieStream, isLoading } = useContentStore();
   const { fetchMovieDetails, movieDetails, isLoading: isTmdbLoading } = useTmdbStore();
-  const { addToFavorites, removeFromFavorites, favorites } = useUserDataStore();
+  const { addToFavorites, removeFromFavorites, favorites, watchHistory } = useUserDataStore();
   const addFavorite = addToFavorites;
   const removeFavorite = removeFromFavorites;
   
@@ -117,6 +117,11 @@ const MovieDetailPage: React.FC = () => {
           onBack={handleBack}
           contentType="movie"
           streamId={movie.stream_id}
+          startPosition={
+            watchHistory.find(
+              h => h.type === 'movie' && h.streamId === movie.stream_id && !h.completed
+            )?.position || 0
+          }
         />
       </VideoPlayerContainer>
     );
@@ -190,7 +195,8 @@ const MovieDetailPage: React.FC = () => {
                         {person.profile_path && (
                           <CastImage 
                             src={`https://image.tmdb.org/t/p/w200${person.profile_path}`} 
-                            alt={person.name} 
+                            alt={person.name}
+                            loading="lazy"
                           />
                         )}
                         <CastName>{person.name}</CastName>

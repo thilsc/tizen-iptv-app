@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { ChannelCard } from '../components/content';
-import { Loading, Tabs } from '../components/ui';
+import { Loading, Tabs, Button } from '../components/ui';
 import { useContentStore, useSettingsStore } from '../store';
 import { Channel, LiveCategory } from '../types';
 
@@ -12,22 +12,16 @@ const LiveTVPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    fetchLiveCategories,
     fetchLiveStreams,
     liveCategories,
     liveChannels,
-    isLoading
+    isLoading,
+    liveError
   } = useContentStore();
   const { isContentBlocked } = useSettingsStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredChannels, setFilteredChannels] = useState<Channel[]>([]);
-  
-  useEffect(() => {
-    fetchLiveCategories();
-    fetchLiveStreams();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   
   useEffect(() => {
     if (liveCategories.length > 0 && !selectedCategory) {
@@ -92,7 +86,12 @@ const LiveTVPage: React.FC = () => {
         />
         
         <ChannelsContainer>
-          {visibleChannels.length > 0 ? (
+          {liveError ? (
+            <ErrorState>
+              <span>{liveError}</span>
+              <Button variant="primary" onClick={() => fetchLiveStreams()}>{t('common.retry')}</Button>
+            </ErrorState>
+          ) : visibleChannels.length > 0 ? (
             visibleChannels.map((channel, index) => (
               <ChannelCard
                 key={channel.stream_id}
@@ -136,6 +135,17 @@ const ChannelsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+`;
+
+const ErrorState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px;
+  text-align: center;
+  color: var(--color-error);
+  font-size: 16px;
 `;
 
 const NoChannels = styled.div`

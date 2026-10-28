@@ -55,7 +55,7 @@ const Card: React.FC<CardProps> = ({
     >
       {poster && (
         <PosterWrapper>
-          <Poster src={poster} alt={title || 'Poster'} />
+          <Poster src={poster} alt={title || 'Poster'} loading="lazy" />
           {badge && <Badge>{badge}</Badge>}
           {progress !== undefined && progress > 0 && (
             <ProgressBar>

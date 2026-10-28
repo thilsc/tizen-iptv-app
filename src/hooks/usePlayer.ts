@@ -3,6 +3,13 @@ import { useRef, useState, useEffect } from 'react';
 import shaka from 'shaka-player';
 import { useUserDataStore } from '../store';
 
+type ShakaTrack = {
+  id?: number | string;
+  videoBandwidth?: number;
+  height?: number;
+  language?: string;
+};
+
 interface PlayerOptions {
   autoPlay?: boolean;
   startPosition?: number;
@@ -81,7 +88,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
     playerRef.current = player;
     
     // Add event listeners
-    player.addEventListener('error', (event) => {
+    player.addEventListener('error', (event: { detail: { message: string } }) => {
       console.error('Shaka player error:', event);
       setError('Video playback error: ' + event.detail.message);
       if (onError) onError(event.detail);
@@ -315,7 +322,12 @@ export const usePlayer = (options: PlayerOptions = {}) => {
       
       // Load the source
       await playerRef.current.load(url);
-      
+
+      // Restore playback position after the media is loaded
+      if (startPosition > 0 && videoRef.current) {
+        videoRef.current.currentTime = startPosition;
+      }
+
       // Get available tracks
       updateAvailableTracks();
       
@@ -340,29 +352,29 @@ export const usePlayer = (options: PlayerOptions = {}) => {
       // Get video tracks (qualities)
       const tracks = playerRef.current.getVariantTracks();
       const qualities = tracks
-        .filter(track => track.videoBandwidth)
-        .map(track => ({
-          id: track.id.toString(),
+        .filter((track: ShakaTrack) => track.videoBandwidth)
+        .map((track: ShakaTrack) => ({
+          id: (track.id ?? '').toString(),
           bandwidth: track.videoBandwidth || 0,
           height: track.height || 0,
           label: track.height ? `${track.height}p` : 'Unknown'
         }))
-        .sort((a, b) => b.height - a.height);
+        .sort((a: {height:number}, b: {height:number}) => b.height - a.height);
       
       // Remove duplicates by height
       const uniqueQualities = qualities
-        .filter((quality, index, self) => 
-          index === self.findIndex(q => q.height === quality.height)
+        .filter((quality: {height:number}, index: number, self: {height:number}[]) => 
+          index === self.findIndex((q: {height:number}) => q.height === quality.height)
         )
-        .map(quality => quality.label);
+        .map((quality: { label: string }) => quality.label);
       
       setAvailableQualities(['auto', ...uniqueQualities]);
       
       // Get text tracks (subtitles)
       const textTracks = playerRef.current.getTextTracks();
       setAvailableSubtitles(
-        textTracks.map(track => ({
-          id: track.id.toString(),
+        textTracks.map((track: ShakaTrack) => ({
+          id: (track.id ?? '').toString(),
           language: track.language || 'unknown'
         }))
       );
@@ -370,7 +382,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
       // Get audio tracks
       const audioTracks = playerRef.current.getAudioLanguagesAndRoles();
       setAvailableAudioTracks(
-        audioTracks.map(track => ({
+        audioTracks.map((track: ShakaTrack) => ({
           id: track.language,
           language: track.language || 'unknown'
         }))
@@ -438,7 +450,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
       playerRef.current.configure({ abr: { enabled: false } });
       
       // Find the track with the selected quality
-      const selectedTrack = tracks.find(track => 
+      const selectedTrack = tracks.find((track: ShakaTrack) => 
         track.height ? `${track.height}p` === quality : false
       );
       
@@ -463,7 +475,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
       }
       
       const tracks = playerRef.current.getTextTracks();
-      const selectedTrack = tracks.find(track => track.id.toString() === subtitleId);
+      const selectedTrack = tracks.find((track: ShakaTrack) => track.id?.toString() === subtitleId);
       
       if (selectedTrack) {
         playerRef.current.selectTextTrack(selectedTrack);
@@ -482,7 +494,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
       if (audioId === null) return;
       
       const tracks = playerRef.current.getVariantTracks();
-      const selectedTracks = tracks.filter(track => track.language === audioId);
+      const selectedTracks = tracks.filter((track: ShakaTrack) => track.language === audioId);
       
       if (selectedTracks.length > 0) {
         // Select the first track with the selected language
