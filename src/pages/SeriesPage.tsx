@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { SeriesCard } from '../components/content';
 import { Loading, Tabs, Grid } from '../components/ui';
-import { useContentStore } from '../store';
+import { useContentStore, useSettingsStore } from '../store';
 import { Series, SeriesCategory } from '../types';
 
 const SeriesPage: React.FC = () => {
@@ -18,6 +18,7 @@ const SeriesPage: React.FC = () => {
     series,
     isLoading
   } = useContentStore();
+  const { isContentBlocked } = useSettingsStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredSeries, setFilteredSeries] = useState<Series[]>([]);
@@ -53,6 +54,10 @@ const SeriesPage: React.FC = () => {
     setSelectedCategory(categoryId);
   };
   
+  const visibleSeries = filteredSeries.filter(
+    s => !isContentBlocked(s.series_id, Number(s.category_id))
+  );
+
   if (isLoading) {
     return (
       <Layout>
@@ -85,9 +90,9 @@ const SeriesPage: React.FC = () => {
           onChange={handleCategoryChange}
         />
         
-        {filteredSeries.length > 0 ? (
+        {visibleSeries.length > 0 ? (
           <Grid columns={5} gap={16}>
-            {filteredSeries.map((seriesItem, index) => (
+            {visibleSeries.map((seriesItem, index) => (
               <SeriesCard
                 key={seriesItem.series_id}
                 series={seriesItem}

@@ -2,8 +2,8 @@ import axios from 'axios';
 import { TMDBMovie, TMDBSeries, TMDBCast, TmdbMovieDetails, TmdbSeriesDetails } from '../types';
 
 class TMDBService {
-  private readonly API_KEY = '42125c682636b68d10d70b487c692685';
-  private readonly ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MjEyNWM2ODI2MzZiNjhkMTBkNzBiNDg3YzY5MjY4NSIsIm5iZiI6MS42NDM4MjA2NjA2OTUwMDAyZSs5LCJzdWIiOiI2MWZhYjY3NGI3YWJiNTAwNjY1YWQ4MzAiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.e06dzH5trScMiz7obFbCFip5dO1XQp-bUC3lecJ8sxU';
+  private readonly API_KEY = (import.meta as { env?: Record<string, string> }).env?.VITE_TMDB_API_KEY || '42125c682636b68d10d70b487c692685';
+  private readonly ACCESS_TOKEN = (import.meta as { env?: Record<string, string> }).env?.VITE_TMDB_ACCESS_TOKEN || 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0MjEyNWM2ODI2MzZiNjhkMTBkNzBiNDg3YzY5MjY4NSIsIm5iZiI6MS42NDM4MjA2NjA2OTUwMDAyZSs5LCJzdWIiOiI2MWZhYjY3NGI3YWJiNTAwNjY1YWQ4MzAiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.e06dzH5trScMiz7obFbCFip5dO1XQp-bUC3lecJ8sxU';
   private readonly BASE_URL = 'https://api.themoviedb.org/3';
   private readonly IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
 

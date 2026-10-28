@@ -35,11 +35,19 @@ const LiveTVPlayerPage: React.FC = () => {
     navigate(-1);
   };
   
-  if (isLoading || !channel) {
+  if (isLoading) {
     return (
       <LoadingContainer>
         <Loading size="large" text={t('common.loading')} />
       </LoadingContainer>
+    );
+  }
+
+  if (!channel) {
+    return (
+      <ErrorContainer>
+        <ErrorMessage>{t('liveTV.noChannels')}</ErrorMessage>
+      </ErrorContainer>
     );
   }
   

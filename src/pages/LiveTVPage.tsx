@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { ChannelCard } from '../components/content';
 import { Loading, Tabs } from '../components/ui';
-import { useContentStore } from '../store';
+import { useContentStore, useSettingsStore } from '../store';
 import { Channel, LiveCategory } from '../types';
 
 const LiveTVPage: React.FC = () => {
@@ -18,6 +18,7 @@ const LiveTVPage: React.FC = () => {
     liveChannels,
     isLoading
   } = useContentStore();
+  const { isContentBlocked } = useSettingsStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredChannels, setFilteredChannels] = useState<Channel[]>([]);
@@ -53,6 +54,10 @@ const LiveTVPage: React.FC = () => {
     setSelectedCategory(categoryId);
   };
   
+  const visibleChannels = filteredChannels.filter(
+    channel => !isContentBlocked(channel.stream_id, Number(channel.category_id))
+  );
+
   if (isLoading) {
     return (
       <Layout>
@@ -86,8 +91,8 @@ const LiveTVPage: React.FC = () => {
         />
         
         <ChannelsContainer>
-          {filteredChannels.length > 0 ? (
-            filteredChannels.map((channel, index) => (
+          {visibleChannels.length > 0 ? (
+            visibleChannels.map((channel, index) => (
               <ChannelCard
                 key={channel.stream_id}
                 channel={channel}

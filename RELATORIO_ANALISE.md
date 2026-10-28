@@ -243,14 +243,47 @@ src/
 
 ---
 
-## 8. Métricas coletadas
+## 8. Status de correção aplicado
+
+### Bugs corrigidos
+- ✅ B1, B2, B3, B4 — carga de streams (live/movies/series) e unificação de listas.
+- ✅ B5, B24, B25 — HeroSlider com itens reais e navegação correta.
+- ✅ B6, B7 — favoritos usando `streamId` (verificação e remoção).
+- ✅ B8 — reprodução aguarda carregamento do stream.
+- ✅ B9 — progresso de séries rastreia `seriesId`.
+- ✅ B10 — horários do EPG usando timestamps.
+- ✅ B11, B27 — toggle de controle parental funcionando.
+- ✅ B12 — `Tabs.tsx` refatorado (Rules of Hooks).
+- ✅ B13 — i18n sem `require()` (import dinâmico).
+- ✅ B14 — `icon.png` gerado para packaging Tizen.
+- ✅ B15 — chaves de tradução faltantes adicionadas.
+- ✅ B16 — IDs de favoritos randomizados.
+- ✅ B17 — `fetchFeaturedContent` sem mutação in-place.
+- ✅ B18 — histórico salva nome do conteúdo.
+- ✅ B19 — estado de loading/erro em player ao vivo.
+- ✅ B21 — `loadCredentials` com try/catch.
+- ✅ B22 — TMDB lê chaves de env (com fallback).
+- ✅ B23 — persistência de credenciais condicionada a rememberMe.
+
+### Bugs pendentes / melhorias futuras
+- ⏳ B20 — estados de loading em detalhes (parcial).
+- ⏳ B26 — navegação de carrossel por controle remoto.
+
+### Gaps atendidos
+- ✅ Ícone do app (`icon.png`) criado.
+- ✅ Traduções faltantes adicionadas (pt/en).
+- ✅ Páginas de Favoritos e Perfil implementadas.
+- ✅ Controle parental aplicado (filtro de conteúdo).
+- ⏳ Testes automatizados ausentes.
+
+## 9. Métricas coletadas (pós-correção)
 
 - Arquivos de código (src): ~60.
 - Páginas: 12 (`Home`, `Login`, `LiveTV`, `LiveTVPlayer`, `Movies`, `MovieDetail`, `Series`, `SeriesDetail`, `Search`, `Settings`).
 - Stores: 5 (`auth`, `content`, `settings`, `tmdb`, `userData`).
 - Serviços: 2 (`xtreamService`, `tmdbService`).
 - Build: sucesso (6 chunks; player 714KB).
-- Lint: 24 erros, 14 avisos.
+- Lint: 0 erros, 17 avisos (após correções).
 - i18n: 75 chaves usadas; ~47 ausentes em `en.json`/`tr.json`.
 
 ---

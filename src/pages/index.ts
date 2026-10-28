@@ -8,3 +8,5 @@ export { default as SeriesDetailPage } from './SeriesDetailPage';
 export { default as LiveTVPlayerPage } from './LiveTVPlayerPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as SearchPage } from './SearchPage';
+export { default as FavoritesPage } from './FavoritesPage';
+export { default as ProfilePage } from './ProfilePage';

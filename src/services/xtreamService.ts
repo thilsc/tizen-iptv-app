@@ -37,12 +37,17 @@ class XtreamService {
     }
   }
 
-  public saveCredentials(server: string, username: string, password: string): void {
-    localStorage.setItem('xtream_credentials', JSON.stringify({ server, username, password }));
+  public saveCredentials(server: string, username: string, password: string, persist: boolean = true): void {
     this.baseUrl = server;
     this.username = username;
     this.password = password;
     this.isAuthenticated = true;
+
+    if (persist) {
+      localStorage.setItem('xtream_credentials', JSON.stringify({ server, username, password }));
+    } else {
+      localStorage.removeItem('xtream_credentials');
+    }
   }
 
   public clearCredentials(): void {
@@ -75,7 +80,7 @@ class XtreamService {
       const response = await axios.get(url);
       
       if (response.data.user_info) {
-        this.saveCredentials(server, username, password);
+        this.saveCredentials(server, username, password, false);
         return response.data.user_info as UserProfile;
       }
       

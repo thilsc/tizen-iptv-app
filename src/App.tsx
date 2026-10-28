@@ -12,7 +12,9 @@ import {
   SeriesDetailPage,
   LiveTVPlayerPage,
   SettingsPage,
-  SearchPage
+  SearchPage,
+  FavoritesPage,
+  ProfilePage
 } from './pages';
 
 // Protected route component
@@ -103,6 +105,18 @@ const App: React.FC = () => {
             <Route path="/search" element={
               <ProtectedRoute>
                 <SearchPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/favorites" element={
+              <ProtectedRoute>
+                <FavoritesPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } />
             

@@ -26,15 +26,10 @@ const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const userProfile = await xtreamService.authenticate(server, username, password);
+      // Persist credentials only when requested
+      xtreamService.saveCredentials(server, username, password, !!rememberMe);
       set({ isAuthenticated: true, userProfile, isLoading: false });
-      
-      // Save credentials to localStorage if rememberMe is true
-      if (rememberMe) {
-        localStorage.setItem('xtream_credentials', JSON.stringify({ server, username, password }));
-      } else {
-        localStorage.removeItem('xtream_credentials');
-      }
-      
+
       return true;
     } catch (error) {
       set({ 

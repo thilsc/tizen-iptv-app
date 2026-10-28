@@ -58,7 +58,7 @@ const useUserDataStore = create<UserDataState>((set, get) => ({
   addToFavorites: (favorite) => {
     const newFavorite: Favorite = {
       ...favorite,
-      id: Date.now(),
+      id: Date.now() + Math.floor(Math.random() * 100000),
       addedAt: new Date().toISOString()
     };
     

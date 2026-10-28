@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { MovieCard } from '../components/content';
 import { Loading, Tabs, Grid } from '../components/ui';
-import { useContentStore } from '../store';
+import { useContentStore, useSettingsStore } from '../store';
 import { Movie, MovieCategory } from '../types';
 
 const MoviesPage: React.FC = () => {
@@ -18,6 +18,7 @@ const MoviesPage: React.FC = () => {
     movies,
     isLoading
   } = useContentStore();
+  const { isContentBlocked } = useSettingsStore();
   
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
@@ -53,6 +54,10 @@ const MoviesPage: React.FC = () => {
     setSelectedCategory(categoryId);
   };
   
+  const visibleMovies = filteredMovies.filter(
+    movie => !isContentBlocked(movie.stream_id, Number(movie.category_id))
+  );
+
   if (isLoading) {
     return (
       <Layout>
@@ -85,9 +90,9 @@ const MoviesPage: React.FC = () => {
           onChange={handleCategoryChange}
         />
         
-        {filteredMovies.length > 0 ? (
+        {visibleMovies.length > 0 ? (
           <Grid columns={5} gap={16}>
-            {filteredMovies.map((movie, index) => (
+            {visibleMovies.map((movie, index) => (
               <MovieCard
                 key={movie.stream_id}
                 movie={movie}
