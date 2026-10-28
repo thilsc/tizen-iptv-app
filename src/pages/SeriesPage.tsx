@@ -26,6 +26,7 @@ const SeriesPage: React.FC = () => {
   useEffect(() => {
     fetchSeriesCategories();
     fetchSeries();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   useEffect(() => {

@@ -26,13 +26,15 @@ const HeroSlider: React.FC<HeroSliderProps> = ({
   // Auto play effect
   useEffect(() => {
     if (!autoPlay || items.length <= 1) return;
-    
+
     const timer = setInterval(() => {
-      goToNext();
+      setIsTransitioning(true);
+      setCurrentIndex(prevIndex => (prevIndex + 1) % items.length);
+      setTimeout(() => setIsTransitioning(false), 500);
     }, interval);
-    
+
     return () => clearInterval(timer);
-  }, [autoPlay, interval, currentIndex, items.length]);
+  }, [autoPlay, interval, items.length]);
   
   const goToNext = () => {
     setIsTransitioning(true);

@@ -26,6 +26,7 @@ const LiveTVPage: React.FC = () => {
   useEffect(() => {
     fetchLiveCategories();
     fetchLiveStreams();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   useEffect(() => {

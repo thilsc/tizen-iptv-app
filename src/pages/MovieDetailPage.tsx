@@ -14,7 +14,7 @@ const MovieDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { movies, fetchMovies, fetchMovieStream, movieStream, isLoading } = useContentStore();
-  const { fetchMovieDetails, movieDetails } = useTmdbStore();
+  const { fetchMovieDetails, movieDetails, isLoading: isTmdbLoading } = useTmdbStore();
   const { addToFavorites, removeFromFavorites, favorites } = useUserDataStore();
   const addFavorite = addToFavorites;
   const removeFavorite = removeFromFavorites;
@@ -28,7 +28,7 @@ const MovieDetailPage: React.FC = () => {
     if (movies.length === 0) {
       fetchMovies();
     }
-  }, [movies.length]);
+  }, [movies.length, fetchMovies]);
 
   // Find the movie from the store
   useEffect(() => {
@@ -53,7 +53,7 @@ const MovieDetailPage: React.FC = () => {
         }
       }
     }
-  }, [id, movies, favorites]);
+  }, [id, movies, favorites, fetchMovieDetails]);
   
   // Fetch stream when play is clicked
   const handlePlay = async () => {
@@ -161,6 +161,8 @@ const MovieDetailPage: React.FC = () => {
                 )}
               </GenreContainer>
               
+              {isTmdbLoading && <Loading size="small" text={t('common.loading')} />}
+
               <Overview>
                 {details?.overview || movie.plot || t('movieDetail.noDescription')}
               </Overview>

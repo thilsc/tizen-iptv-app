@@ -41,7 +41,7 @@ const App: React.FC = () => {
     if (typeof autoLogin === 'function') {
       autoLogin();
     }
-  }, []);
+  }, [initializeSettings, autoLogin]);
   
   return (
     <ThemeProvider>

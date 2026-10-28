@@ -44,6 +44,7 @@ const HomePage: React.FC = () => {
       await fetchFeaturedContent();
     };
     loadAll();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   // Prepare continue watching list

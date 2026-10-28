@@ -33,19 +33,23 @@ const Carousel: React.FC<CarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
   
-  // Handle keyboard navigation
-  useKeyboardNavigation({
-    onLeft: () => {
-      if (isFocused && currentIndex > 0) {
-        scrollToIndex(currentIndex - 1);
-      }
-    },
-    onRight: () => {
-      if (isFocused && currentIndex < children.length - 1) {
-        scrollToIndex(currentIndex + 1);
-      }
-    },
-  });
+  // Handle keyboard navigation (only when focused)
+  useKeyboardNavigation(
+    isFocused
+      ? {
+          onLeft: () => {
+            if (currentIndex > 0) {
+              scrollToIndex(currentIndex - 1);
+            }
+          },
+          onRight: () => {
+            if (currentIndex < children.length - 1) {
+              scrollToIndex(currentIndex + 1);
+            }
+          },
+        }
+      : {}
+  );
   
   // Auto scroll effect
   useEffect(() => {
@@ -136,6 +140,7 @@ const Carousel: React.FC<CarouselProps> = ({
       
       <CarouselWrapper
         ref={carouselRef}
+        isFocused={isFocused}
         onScroll={handleScroll}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
@@ -203,13 +208,17 @@ const SeeAllButton = styled.button`
   }
 `;
 
-const CarouselWrapper = styled.div`
+const CarouselWrapper = styled.div<{ isFocused: boolean }>`
   display: flex;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
-  
+  outline: ${({ isFocused }) => (isFocused ? '2px solid var(--color-primary)' : 'none')};
+  outline-offset: 4px;
+  border-radius: 8px;
+  transition: outline 0.2s ease;
+
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }

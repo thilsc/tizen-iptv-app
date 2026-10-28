@@ -30,6 +30,9 @@ interface UserDataState {
   importUserData: (userData: UserData) => void;
 }
 
+// Monotonic counter for unique favorite ids
+let favoriteIdCounter = Date.now();
+
 // Load data from localStorage
 const loadFavorites = (): Favorite[] => {
   const savedFavorites = localStorage.getItem('favorites');
@@ -58,7 +61,7 @@ const useUserDataStore = create<UserDataState>((set, get) => ({
   addToFavorites: (favorite) => {
     const newFavorite: Favorite = {
       ...favorite,
-      id: Date.now() + Math.floor(Math.random() * 100000),
+      id: ++favoriteIdCounter,
       addedAt: new Date().toISOString()
     };
     

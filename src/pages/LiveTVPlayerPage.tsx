@@ -28,7 +28,7 @@ const LiveTVPlayerPage: React.FC = () => {
         fetchChannelStream(foundChannel.stream_id);
       }
     }
-  }, [id, liveChannels]);
+  }, [id, liveChannels, fetchLiveStreams, fetchChannelStream]);
   
   // Handle back button
   const handleBack = () => {

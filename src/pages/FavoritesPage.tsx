@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Layout } from '../components/layout';
 import { MovieCard, SeriesCard, ChannelCard } from '../components/content';
-import { Loading, Grid } from '../components/ui';
+import { Grid } from '../components/ui';
 import { useContentStore, useUserDataStore } from '../store';
 import { Movie, Series, Channel } from '../types';
 
@@ -12,12 +12,13 @@ const FavoritesPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { movies, series, liveChannels, fetchMovies, fetchSeries, fetchLiveStreams } = useContentStore();
-  const { favorites, removeFromFavorites } = useUserDataStore();
+  const { favorites } = useUserDataStore();
 
   useEffect(() => {
     if (movies.length === 0) fetchMovies();
     if (series.length === 0) fetchSeries();
     if (liveChannels.length === 0) fetchLiveStreams();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const favMovies = favorites.filter(f => f.type === 'movie');

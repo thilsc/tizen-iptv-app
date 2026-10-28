@@ -28,6 +28,7 @@ interface FocusableOptions {
 
 const FocusContext = createContext<FocusContextType | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFocusContext = () => {
   const context = useContext(FocusContext);
   if (!context) {

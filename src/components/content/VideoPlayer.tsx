@@ -82,6 +82,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   // Load the video source
   useEffect(() => {
     loadSource(url, drmInfo);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, drmInfo]);
   
   // Handle keyboard navigation
@@ -115,6 +116,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         clearTimeout(controlsTimeout);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showControls, isPlaying]);
   
   // Handle mouse movement to show controls

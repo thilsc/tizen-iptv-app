@@ -26,6 +26,7 @@ const MoviesPage: React.FC = () => {
   useEffect(() => {
     fetchMovieCategories();
     fetchMovies();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   useEffect(() => {

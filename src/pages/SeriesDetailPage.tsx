@@ -23,7 +23,7 @@ const SeriesDetailPage: React.FC = () => {
     episodeStream,
     isLoading
   } = useContentStore();
-  const { fetchSeriesDetails, seriesDetails } = useTmdbStore();
+  const { fetchSeriesDetails, seriesDetails, isLoading: isTmdbLoading } = useTmdbStore();
   const { addToFavorites, removeFromFavorites, favorites } = useUserDataStore();
   const addFavorite = addToFavorites;
   const removeFavorite = removeFromFavorites;
@@ -38,7 +38,7 @@ const SeriesDetailPage: React.FC = () => {
     if (series.length === 0) {
       fetchSeries();
     }
-  }, [series.length]);
+  }, [series.length, fetchSeries]);
 
   // Find the series from the store
   useEffect(() => {
@@ -60,7 +60,7 @@ const SeriesDetailPage: React.FC = () => {
         }
       }
     }
-  }, [id, series, favorites]);
+  }, [id, series, favorites, fetchSeriesDetails, fetchSeriesSeasons]);
   
   // When seasons are loaded, select the first one
   useEffect(() => {
@@ -74,7 +74,7 @@ const SeriesDetailPage: React.FC = () => {
     if (seriesData && selectedSeason) {
       fetchSeriesEpisodes(seriesData.series_id, parseInt(selectedSeason));
     }
-  }, [seriesData, selectedSeason]);
+  }, [seriesData, selectedSeason, fetchSeriesEpisodes]);
   
   // Toggle favorite status
   const toggleFavorite = () => {
@@ -196,6 +196,8 @@ const SeriesDetailPage: React.FC = () => {
                 )}
               </GenreContainer>
               
+              {isTmdbLoading && <Loading size="small" text={t('common.loading')} />}
+
               <Overview>
                 {details?.overview || seriesData.plot || t('seriesDetail.noDescription')}
               </Overview>
@@ -245,7 +247,11 @@ const SeriesDetailPage: React.FC = () => {
           )}
           
           <EpisodesList>
-            {episodes.length > 0 ? (
+            {isLoading ? (
+              <LoadingContainer>
+                <Loading size="large" text={t('common.loading')} />
+              </LoadingContainer>
+            ) : episodes.length > 0 ? (
               episodes.map((episode, index) => (
                 <EpisodeCard
                   key={episode.id}

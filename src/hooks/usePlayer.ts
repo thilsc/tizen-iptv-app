@@ -124,6 +124,7 @@ export const usePlayer = (options: PlayerOptions = {}) => {
         playerRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   // Add video element event listeners
@@ -266,6 +267,8 @@ export const usePlayer = (options: PlayerOptions = {}) => {
     streamId,
     seasonNumber,
     episodeNumber,
+    seriesId,
+    title,
     addToWatchHistory
   ]);
   

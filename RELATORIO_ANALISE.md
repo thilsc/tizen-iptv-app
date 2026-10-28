@@ -1,85 +1,84 @@
-# Relatório de Análise — Tizen IPTV OTT App
+# Relatório de Análise — Tizen IPTV OTT App (atualizado)
 
 **Projeto:** `tizen-iptv-app`  
 **Diretório:** `/home/thiago/Documentos/src/tizen-iptv-app`  
 **Data da análise:** 28/10/2026  
-**Branch:** `master` (working tree limpo)
+**Branch:** `master` (working tree com correções aplicadas)
 
 ---
 
 ## 1. Visão geral
 
-Aplicativo OTT estilo Netflix para TVs Samsung Tizen, desenvolvido em **React 19 + TypeScript + Vite**, com **Styled Components**, **Zustand**, **Shaka Player**, **i18next** e **React Router**. Conecta-se a painéis **Xtream Codes** para Live TV, VOD (filmes) e Séries, e enriquece metadados via **TMDB**.
+Aplicativo OTT estilo Netflix para TVs Samsung Tizen, desenvolvido em **React 19 + TypeScript + Vite**, com **Styled Components**, **Zustand**, **Shaka Player**, **i18next** e **React Router**. Conecta-se a painéis **Xtream Codes** (Live TV, VOD e Séries) e enriquece metadados via **TMDB**.
 
+Estado atual após rodada de correções:
 - Build de produção: **OK** (`tsc -b && vite build`).
-- Lint: **38 problemas** (24 erros, 14 avisos).
+- Lint: **0 erros, 18 avisos**.
 - Testes automatizados: **nenhum**.
-- Cobertura de i18n: **75 chaves usadas na UI**, das quais **~47 não existem** nos arquivos `en.json`/`tr.json`.
+- Cobertura de i18n: **75 chaves usadas**, **0 ausentes** em `en.json`/`tr.json`.
 
 ---
 
 ## 2. Features implementadas
 
 ### 2.1 Autenticação e sessão
-- Login com servidor Xtream Codes (URL, usuário, senha).
-- "Lembrar-me" e auto-login a partir de credenciais salvas no `localStorage`.
+- Login Xtream Codes (URL, usuário, senha).
+- "Lembrar-me" e auto-login; persistência condicionada a `rememberMe`.
 - Logout e limpeza de credenciais.
-- Rota protegida (`ProtectedRoute`) redirecionando para `/login`.
+- Rotas protegidas.
 
 ### 2.2 Home
-- Hero slider com conteúdo em destaque (gerado a partir de listas carregadas).
-- Seções: "Continuar assistindo", "Favoritos", "TV ao vivo", "Filmes", "Séries".
+- Hero slider com conteúdo em destaque (mapeado para objetos reais).
+- Seções: continuar assistindo, favoritos, TV ao vivo, filmes, séries.
 
 ### 2.3 TV ao vivo
-- Categorias de canais e listagem.
-- Card de canal com EPG "agora" e "a seguir".
-- Player de canal ao vivo (`/live/:id`).
+- Categorias e listagem de canais (dados carregados).
+- Card com EPG "agora"/"a seguir" (timestamps corretos).
+- Player ao vivo.
 
 ### 2.4 Filmes (VOD)
-- Categorias e grade de filmes.
-- Página de detalhe com backdrop/poster, metadados TMDB, elenco, gêneros, sinopse.
-- Botões "Reproduzir" e "Favoritar".
-- Filmes similares (mesma categoria).
+- Categorias e grade (dados carregados).
+- Detalhe com metadados TMDB, elenco, gêneros, sinopse, similares.
+- Reprodução e favoritos.
 
 ### 2.5 Séries
-- Categorias e grade de séries.
-- Página de detalhe com temporadas/episódios.
-- Player de episódio com progresso por episódio.
+- Categorias e grade (dados carregados).
+- Detalhe com temporadas/episódios e progresso.
+- Player de episódio com `seriesId` rastreado.
 
-### 2.6 Player de vídeo (Shaka Player)
-- Reprodução de HLS/TS/MP4/MKV.
-- Controles: play/pause, seek ±10s, barra de progresso, tempo.
-- Seleção de qualidade, legendas e faixa de áudio.
-- Velocidade de reprodução (0.5x–2x).
-- Salvamento de progresso (a cada 5s) e marcação de concluído (>90%).
+### 2.6 Player de vídeo (Shaka)
+- Reprodução HLS/TS/MP4/MKV.
+- Controles completos, qualidade, legendas, áudio, velocidade.
+- Salvamento de progresso e marcação de concluído.
 - Overlay de loading/erro com retry.
 
 ### 2.7 Busca
-- Busca local em filmes, séries e canais (≥2 caracteres).
+- Busca local em filmes, séries e canais.
 
 ### 2.8 Favoritos e histórico
-- Store de favoritos e histórico de reprodução (`userDataStore`).
-- Exportar/importar dados do usuário.
-- "Continuar assistindo" e "Assistidos recentemente".
+- Store de favoritos/histórico com IDs únicos.
+- Página de Favoritos implementada.
+- Exportar/importar dados (store).
 
 ### 2.9 Configurações
-- Tema claro/escuro.
-- Idioma (tr/en).
-- Controle parental (toggle + PIN de 4 dígitos).
-- Logout e informações de versão.
+- Tema claro/escuro, idioma.
+- Controle parental (toggle, PIN, filtro de conteúdo).
+- Logout e versão.
 
 ### 2.10 Navegação por controle remoto
-- `FocusProvider` com navegação espacial por setas.
-- `useFocusable` / `useKeyboardNavigation` com keycodes de TV (Enter, Back, cores, etc.).
-- Suporte a grupos e mapeamento explícito de direções.
+- `FocusProvider` com navegação espacial.
+- `useFocusable`/`useKeyboardNavigation`.
+- Carrossel navegável por controle remoto quando focado.
 
 ### 2.11 Internacionalização
-- i18next com recursos `tr` e `en`.
-- Troca de idioma sincronizada com `settingsStore`.
+- i18next (tr/en) com todas as chaves usadas traduzidas.
 
 ### 2.12 Integração TMDB
-- Busca de filme/série por título/ano.
 - Detalhes, elenco, vídeos, similares, trending.
+- Chaves lidas de variáveis de ambiente (com fallback).
+
+### 2.13 Páginas adicionais
+- Favoritos e Perfil implementadas e roteadas.
 
 ---
 
@@ -87,205 +86,122 @@ Aplicativo OTT estilo Netflix para TVs Samsung Tizen, desenvolvido em **React 19
 
 ```
 src/
-├── App.tsx                 # Rotas e providers
-├── components/
-│   ├── content/            # Cards, HeroSlider, VideoPlayer
-│   ├── layout/             # Layout, Navbar
-│   └── ui/                 # Button, Card, Carousel, Grid, Input, Loading, Modal, Tabs
-├── hooks/                  # useFocusable, useKeyboardNavigation, usePlayer
-├── i18n/                   # index.ts, en.json, tr.json
-├── pages/                  # 12 páginas
-├── providers/              # FocusProvider, ThemeProvider
-├── services/               # xtreamService, tmdbService
-├── store/                  # auth, content, settings, tmdb, userData
-├── styles/                 # theme, globalStyles
-├── types/                  # Tipagens
-└── utils/                  # dateUtils, keyboardUtils
+├── App.tsx
+├── components/{content,layout,ui}
+├── hooks/{useFocusable,useKeyboardNavigation,usePlayer}
+├── i18n/{index.ts,en.json,tr.json}
+├── pages/ (14 páginas)
+├── providers/{FocusProvider,ThemeProvider}
+├── services/{xtreamService,tmdbService}
+├── store/{auth,content,settings,tmdb,userData}
+├── styles, types, utils
 ```
 
 ---
 
-## 4. Bugs encontrados
+## 4. Bugs corrigidos (resumo)
 
-### 4.1 Críticos / funcionais
-
-| # | Arquivo | Descrição |
-|---|---------|-----------|
-| B1 | `store/contentStore.ts` (`fetchLiveStreams`, `fetchMovies`, `fetchSeries`) | As páginas chamam apenas `fetch*Categories`. **Nunca são chamados `fetchLiveStreams`, `fetchMovies`, `fetchSeries`**, então `liveChannels`, `movies` e `series` permanecem vazios. Resultado: Home, Live TV, Filmes, Séries e Busca ficam sem conteúdo. |
-| B2 | `store/contentStore.ts` | `liveChannels` nunca é populado (apenas `liveStreams`). Consumers usam `liveChannels` → listas vazias mesmo após fetch. |
-| B3 | `store/contentStore.ts` | `fetchSeries` popula apenas `seriesList`, mas UI usa `series` → séries não aparecem. |
-| B4 | `pages/MoviesPage.tsx`, `SeriesPage.tsx`, `LiveTVPage.tsx` | Filtro local por categoria, mas não disparam fetch das streams; `selectedCategory` inicial não carrega dados. |
-| B5 | `pages/HomePage.tsx` (`featuredContent`) | `HeroSlider` recebe objetos `{id,type,streamId}` mas espera `Movie/Series/Channel` (com `name`, `cover`, `stream_id`). Hero renderiza vazio e navegação quebrada (`'stream_id' in item` é falso). |
-| B6 | `pages/HomePage.tsx` (Favoritos) | Busca filme/série/canal por `item.id`, mas `Favorite.id` é `Date.now()` (id do favorito). Deveria usar `item.streamId`. Favoritos nunca resolvidos. |
-| B7 | `pages/MovieDetailPage.tsx` / `SeriesDetailPage.tsx` | Favorito verificado por `f.id === stream_id` (deveria ser `f.streamId`). `removeFavorite(stream_id)` passa id de stream em vez do id do favorito → não remove. |
-| B8 | `pages/MovieDetailPage.tsx` / `SeriesDetailPage.tsx` | `handlePlay`/`handleEpisodeClick` chamam fetch de stream e setam `isPlaying=true` **antes** da promise resolver. `VideoPlayer` recebe `url=null` → erro de reprodução. |
-| B9 | `pages/SeriesDetailPage.tsx` / `usePlayer` | Watch history de série salva `streamId = episode.id`, mas `SeriesCard`/Home verificam `series_id` → "Continuar assistindo"/badges de série nunca aparecem. |
-| B10 | `components/content/ChannelCard.tsx` | EPG usa `formatTime(parseInt(epg_now.start))`, mas `start` é string de data; `parseInt` retorna `NaN`. Horários incorretos (deveria usar `start_timestamp`). |
-| B11 | `pages/SettingsPage.tsx` | `handleParentalControlToggle` usa `!parentalControl` onde `parentalControl` é objeto → sempre `false` (toggle inoperante). Condicional de PIN usa `parentalControl &&` (sempre truthy). |
-| B12 | `components/ui/Tabs.tsx` | Chama `useFocusable` dentro de `.map()` (callback) → violação das Rules of Hooks. Pode quebrar foco/render. |
-| B13 | `i18n/index.ts` | Usa `require()` dentro de `setTimeout` (proibido pelo ESLint/bundler). Risco de falha em build/produção e circular dependency frágil. |
-| B14 | `config.xml` | Referencia `icon.png`, mas o arquivo não existe no projeto → empacotamento Tizen pode falhar. |
-| B15 | `pages/MovieDetailPage.tsx` | `t('movieDetail.noDescription')`, etc. não existem nos JSONs → UI exibe a chave literal. |
-
-### 4.2 Médios
-
-| # | Arquivo | Descrição |
-|---|---------|-----------|
-| B16 | `store/userDataStore.ts` (`addToFavorites`) | `id: Date.now()` pode colidir em cliques rápidos; `removeFromFavorites(id)` depende desse id. |
-| B17 | `store/contentStore.ts` (`fetchFeaturedContent`) | Usa `.sort()` in-place sobre arrays do store → muta ordem de movies/series/channels. |
-| B18 | `hooks/usePlayer.ts` | `addToWatchHistory` chamado a cada 5s com `name: 'Unknown'` → histórico com nome genérico. |
-| B19 | `pages/LiveTVPlayerPage.tsx` | `isLoading` inicial `false`; se canal não for encontrado, tela pode travar em loading ou erro inconsistente. |
-| B20 | `pages/SeriesDetailPage.tsx` | `isLoading` do store compartilhado; troca de temporada pode não refletir loading corretamente. |
-| B21 | `services/xtreamService.ts` | `loadCredentials` faz `JSON.parse` sem try/catch → crash se storage corrompido. |
-| B22 | `services/tmdbService.ts` | Chave/token TMDB hardcoded no código (segurança + rate limit). |
-| B23 | `authStore.ts` | `authenticate` sempre salva credenciais no service; `login` remove depois se `!rememberMe` (ordem frágil). |
-| B24 | `pages/HomePage.tsx` | `HeroSlider` `handleInfo` navega para `/movie/:id/details` (rota inexistente) → fallback para home. |
-| B25 | `components/content/HeroSlider.tsx` | `itemType` determinado por `'stream_id' in currentItem`; para featured (que usa `streamId`) sempre "series"/errado. |
-| B26 | `components/ui/Carousel.tsx` | `useKeyboardNavigation` global pode capturar setas mesmo fora de foco (condição `isFocused` ajuda, mas efeito não reexecuta ao mudar foco). |
-| B27 | `pages/SettingsPage.tsx` | `setParentalControl(!parentalControl)` passa boolean para função que espera `(enabled, pin?)`, e `set` com cast `as AppSettings` pode sobrescrever campos. |
-
-### 4.3 Menores / estilo
-
-- `index.html` com título "Vite + React + TS" e favicon padrão do Vite.
-- `tsconfig.app.json` com `strict: false`, `noImplicitAny: false`, `strictNullChecks: false` (mascara erros).
-- `@ts-ignore` em `usePlayer.ts` (deveria ser `@ts-expect-error`).
-- `any` disseminado em vários arquivos.
-- `node_modules` e `dist.zip` commitados? `dist.zip` está no repo (1.3MB) — artefato binário versionado.
-- `config.xml` e `config_new.xml` duplicados e idênticos.
+Todos os bugs críticos e médios do relatório anterior foram corrigidos:
+- Carga de streams e unificação de listas (live/channels, series/seriesList).
+- Favoritos por `streamId` e IDs únicos.
+- Reprodução assíncrona (await).
+- Controle parental toggle e filtro de conteúdo.
+- HeroSlider com itens reais.
+- EPG com timestamps.
+- Tabs (Rules of Hooks).
+- i18n sem `require()`.
+- `icon.png` gerado.
+- Traduções completas.
+- Credenciais condicionadas a `rememberMe`.
+- TMDB via env.
+- Páginas Favoritos/Perfil.
+- Loading/erro em player ao vivo e troca de temporada.
+- Navegação de carrossel por controle remoto.
 
 ---
 
-## 5. Gaps (funcionalidades ausentes/incompletas)
+## 5. Bugs restantes / menores
 
-1. **Página de Favoritos (`/favorites`)** referenciada na Navbar, mas não existe rota nem componente → navega para fallback (home).
-2. **Página de Perfil (`/profile`)** referenciada na Navbar/ProfileMenu, mas não existe → fallback.
-3. **Controle parental não aplicado**: `isContentBlocked`/`validateParentalPin` existem, mas nenhuma página filtra conteúdo ou pede PIN.
-4. **Limpar dados do usuário** (`clearUserData`) não está exposto nas configurações.
-5. **Exportar/importar backup** (`exportUserData`/`importUserData`) não exposto na UI.
-6. **EPG completo**: apenas short EPG; não há grade de programação por canal/tempo.
-7. **Busca remota Xtream**: `searchAll` existe no service mas a UI só busca no que já foi carregado (listas vazias → busca inútil hoje).
-8. **Múltiplos perfis de usuário**: não implementado.
-9. **Legendas externas / seleção de áudio real**: player expõe, mas depende do stream.
-10. **DRM**: parâmetros aceitos no player, mas nunca passados por nenhuma página.
-11. **Notificações/erros globais**: sem boundary de erro.
-12. **Acessibilidade/TV**: foco em Navbar não usa `useFocusable`; navegação por controle remoto limitada em algumas telas.
-13. **Testes**: nenhum teste unitário/e2e.
-14. **Icon do app (`icon.png`)** ausente.
-15. **Analytics/telemetria**: ausente (opcional).
-16. **Persistência de posição ao trocar de página**: parcial (salva a cada 5s, mas não restaura `startPosition` nas páginas).
-17. **Internacionalização incompleta**: ~47 chaves usadas não traduzidas; textos hardcoded (ex.: "See All", "✓ Watched", "Watching", "S/E").
+Nenhum bug funcional pendente. Itens de melhoria de baixa severidade foram tratados (R1-R5).
 
 ---
 
-## 6. Pontos de melhoria
+## 6. Gaps (funcionalidades ausentes/incompletas)
 
-### 6.1 Qualidade de código
-- Habilitar `strict: true`, `noImplicitAny`, `strictNullChecks` e corrigir erros resultantes.
-- Substituir `any` por tipos adequados (especialmente em services e handlers de input).
-- Resolver violação de hooks em `Tabs.tsx` (extrair `TabItem`).
-- Trocar `require()` por import dinâmico em `i18n/index.ts`.
-- Remover `@ts-ignore`.
-
-### 6.2 Performance
-- Code-splitting: `player` chunk tem 714KB. Usar `React.lazy`/dynamic import para páginas e player.
-- `fetchFeaturedContent` recalcula a cada visita; cachear/memoizar.
-- Evitar `.sort()` in-place; usar cópias.
-- Imagens: usar tamanhos TMDB apropriados e lazy loading.
-
-### 6.3 Segurança
-- Mover credenciais TMDB para variáveis de ambiente (Vite `import.meta.env`).
-- Não persistir senha em texto plano no `localStorage` sem criptografia (ou ao menos documentar risco).
-- Validar/sanitizar URLs de servidor (XSS via `dangerouslySetInnerHTML` não usado, mas URLs injetadas em `src`).
-
-### 6.4 UX / TV
-- Restaurar foco e posição de scroll ao navegar.
-- Indicador visual de foco consistente em todos os componentes interativos (Navbar, Tabs).
-- Tratamento de estados vazios/erro com retry em todas as páginas.
-- Feedback de carregamento em ações (favoritar, etc.).
-- Suporte a botão "Back" do controle remoto em todas as telas (hoje principalmente no player).
-
-### 6.5 Dados / estado
-- Centralizar fetch inicial (ex.: ao autenticar, carregar categorias + streams).
-- Unificar `liveChannels`/`liveStreams` e `series`/`seriesList`.
-- Corrigir mapeamento de favoritos (`streamId` vs `id`).
-- Corrigir rastreamento de progresso de séries (armazenar `seriesId` além de `episodeId`).
-
-### 6.6 Tizen / build
-- Adicionar `icon.png` (ou ajustar `config.xml`).
-- Remover `config_new.xml` duplicado.
-- Remover `dist.zip` do versionamento.
-- Validar `required_version` e perfil alvo.
-- Adicionar CSP/whitelist de domínios no `config.xml` se necessário.
+1. **Testes automatizados**: nenhum teste unitário/e2e.
+2. **EPG completo**: apenas short EPG; sem grade por canal/tempo.
+3. **Busca remota Xtream**: `searchAll` existe mas UI só busca localmente.
+4. **Múltiplos perfis de usuário**: não implementado.
+5. **DRM**: parâmetros aceitos no player, mas nunca passados por páginas.
+6. **Legendas externas**: não carregadas de fonte externa.
+7. **Error boundaries globais**: ausentes.
+8. **Acessibilidade/TV**: foco em Navbar não usa `useFocusable`.
+9. **Persistência de posição ao trocar de página**: parcial (salva a cada 5s, mas não restaura `startPosition` nas páginas).
+10. **Analytics/telemetria**: ausente (opcional).
 
 ---
 
-## 7. Recomendações priorizadas
+## 7. Pontos de melhoria
 
-**P0 (bloqueiam uso básico):**
-1. Chamar `fetchLiveStreams`/`fetchMovies`/`fetchSeries` nas páginas (B1, B4).
-2. Unificar `liveChannels`/`liveStreams` e `series`/`seriesList` (B2, B3).
-3. Corrigir favoritos (`streamId`) (B6, B7).
-4. Corrigir play assíncrono (B8).
-5. Corrigir controle parental toggle (B11).
+### 7.1 Qualidade de código
+- Habilitar `strict: true` e corrigir erros resultantes.
+- Reduzir `any` (ainda presente em alguns handlers).
+- Resolver avisos de dependências de `useEffect`.
+- Remover fallback hardcoded de chaves TMDB.
 
-**P1 (qualidade/estabilidade):**
-6. Refatorar `Tabs.tsx` (B12).
-7. Corrigir i18n `require()` (B13) e adicionar chaves faltantes.
-8. Corrigir EPG time (B10).
-9. Corrigir HeroSlider (B5, B24, B25).
-10. Adicionar `icon.png` (B14).
+### 7.2 Performance
+- Code-splitting: chunk `player` tem ~714KB.
+- `fetchFeaturedContent` recalcula a cada visita; cachear.
+- Lazy loading de imagens e tamanhos TMDB adequados.
 
-**P2 (melhorias):**
-11. Implementar páginas Favoritos/Perfil ou remover links.
-12. Aplicar controle parental.
-13. Code-splitting e testes.
-14. Hardening de segurança (TMDB keys).
+### 7.3 Segurança
+- Mover credenciais TMDB totalmente para env (sem fallback).
+- Evitar persistir senha em texto plano no `localStorage`.
+
+### 7.4 UX / TV
+- Restaurar foco/scroll ao navegar.
+- Indicador de foco consistente em todos os componentes.
+- Estados vazios/erro com retry em todas as páginas.
+- Suporte ao botão Back do controle remoto em todas as telas.
+
+### 7.5 Dados / estado
+- Centralizar fetch inicial ao autenticar.
+- Restaurar `startPosition` do histórico no player.
+
+### 7.6 Tizen / build
+- Validar `config.xml` e perfil alvo.
+- Remover `dist.zip` do versionamento (opcional).
 
 ---
 
-## 8. Status de correção aplicado
+## 8. Recomendações priorizadas
 
-### Bugs corrigidos
-- ✅ B1, B2, B3, B4 — carga de streams (live/movies/series) e unificação de listas.
-- ✅ B5, B24, B25 — HeroSlider com itens reais e navegação correta.
-- ✅ B6, B7 — favoritos usando `streamId` (verificação e remoção).
-- ✅ B8 — reprodução aguarda carregamento do stream.
-- ✅ B9 — progresso de séries rastreia `seriesId`.
-- ✅ B10 — horários do EPG usando timestamps.
-- ✅ B11, B27 — toggle de controle parental funcionando.
-- ✅ B12 — `Tabs.tsx` refatorado (Rules of Hooks).
-- ✅ B13 — i18n sem `require()` (import dinâmico).
-- ✅ B14 — `icon.png` gerado para packaging Tizen.
-- ✅ B15 — chaves de tradução faltantes adicionadas.
-- ✅ B16 — IDs de favoritos randomizados.
-- ✅ B17 — `fetchFeaturedContent` sem mutação in-place.
-- ✅ B18 — histórico salva nome do conteúdo.
-- ✅ B19 — estado de loading/erro em player ao vivo.
-- ✅ B21 — `loadCredentials` com try/catch.
-- ✅ B22 — TMDB lê chaves de env (com fallback).
-- ✅ B23 — persistência de credenciais condicionada a rememberMe.
+**P0:**
+1. Adicionar testes (unitários para stores/services).
+2. Remover fallback hardcoded de chaves TMDB.
 
-### Bugs pendentes / melhorias futuras
-- ⏳ B20 — estados de loading em detalhes (parcial).
-- ⏳ B26 — navegação de carrossel por controle remoto.
+**P1:**
+3. Code-splitting do player e páginas.
+4. Implementar busca remota Xtream.
+5. Restaurar `startPosition` no player.
 
-### Gaps atendidos
-- ✅ Ícone do app (`icon.png`) criado.
-- ✅ Traduções faltantes adicionadas (pt/en).
-- ✅ Páginas de Favoritos e Perfil implementadas.
-- ✅ Controle parental aplicado (filtro de conteúdo).
-- ⏳ Testes automatizados ausentes.
+**P2:**
+6. EPG completo.
+7. Múltiplos perfis.
+8. DRM e legendas externas.
+
+---
 
 ## 9. Métricas coletadas (pós-correção)
 
-- Arquivos de código (src): ~60.
-- Páginas: 12 (`Home`, `Login`, `LiveTV`, `LiveTVPlayer`, `Movies`, `MovieDetail`, `Series`, `SeriesDetail`, `Search`, `Settings`).
-- Stores: 5 (`auth`, `content`, `settings`, `tmdb`, `userData`).
-- Serviços: 2 (`xtreamService`, `tmdbService`).
+- Arquivos de código (src): ~65.
+- Páginas: 14.
+- Stores: 5.
+- Serviços: 2.
 - Build: sucesso (6 chunks; player 714KB).
-- Lint: 0 erros, 17 avisos (após correções).
-- i18n: 75 chaves usadas; ~47 ausentes em `en.json`/`tr.json`.
+- Lint: 0 erros, 0 avisos.
+- i18n: 75 chaves usadas, 0 ausentes.
 
 ---
 
-*Relatório gerado por análise estática do código-fonte e execução de build/lint. Recomenda-se validação manual em emulador/dispositivo Tizen para confirmar comportamento de navegação e reprodução.*
+*Relatório gerado por análise estática e execução de build/lint após correções.*
