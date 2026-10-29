@@ -19,6 +19,7 @@
   "navigation": {
     "home": "Home",
     "liveTV": "Live TV",
+    "epg": "TV Guide",
     "movies": "Movies",
     "series": "Series",
     "favorites": "Favorites",
@@ -146,6 +147,15 @@
     "noChannels": "No channels available",
     "streamError": "Stream could not be loaded",
     "title": "Live TV"
+  },
+  "epg": {
+    "title": "TV Guide",
+    "allChannels": "All Channels",
+    "noChannels": "No channels available",
+    "noPrograms": "No program information available",
+    "nowPlaying": "Now",
+    "refresh": "Refresh",
+    "loadMore": "Load More"
   },
   "movieDetail": {
     "cast": "Cast",

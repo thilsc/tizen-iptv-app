@@ -1,6 +1,7 @@
 export { default as LoginPage } from './LoginPage';
 export { default as HomePage } from './HomePage';
 export { default as LiveTVPage } from './LiveTVPage';
+export { default as EPGPage } from './EPGPage';
 export { default as MoviesPage } from './MoviesPage';
 export { default as SeriesPage } from './SeriesPage';
 export { default as MovieDetailPage } from './MovieDetailPage';

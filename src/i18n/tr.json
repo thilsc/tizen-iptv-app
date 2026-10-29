@@ -19,6 +19,7 @@
   "navigation": {
     "home": "Ana Sayfa",
     "liveTV": "Canlı TV",
+    "epg": "TV Rehberi",
     "movies": "Filmler",
     "series": "Diziler",
     "favorites": "Favoriler",
@@ -146,6 +147,15 @@
     "noChannels": "Kanal bulunamadı",
     "streamError": "Yayın alınamadı",
     "title": "Canlı TV"
+  },
+  "epg": {
+    "title": "TV Rehberi",
+    "allChannels": "Tüm Kanallar",
+    "noChannels": "Kanal bulunamadı",
+    "noPrograms": "Program bilgisi mevcut değil",
+    "nowPlaying": "Şimdi",
+    "refresh": "Yenile",
+    "loadMore": "Daha Fazla"
   },
   "movieDetail": {
     "cast": "Oyuncular",

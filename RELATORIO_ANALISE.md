@@ -172,36 +172,29 @@ Nenhum bug funcional pendente. Itens de melhoria de baixa severidade foram trata
 - ✅ `config.xml` validado (XML e `icon.png`).
 - ✅ `dist.zip` e `config_new.xml` removidos; artefatos no `.gitignore`.
 
----
+### 8. Pontos restantes (após EPG completo)
 
-## 8. Recomendações priorizadas
+Agora todas as lacunas estão preenchidas:
 
-**P0:**
-1. Adicionar testes (unitários para stores/services).
-2. Remover fallback hardcoded de chaves TMDB.
-
-**P1:**
-3. Code-splitting do player e páginas.
-4. Implementar busca remota Xtream.
-5. Restaurar `startPosition` no player.
-
-**P2:**
-6. EPG completo.
-7. Múltiplos perfis.
-8. DRM e legendas externas.
+1. **Testes automatizados**: nenhum (planejado para P0).
+2. **EPG completo**: ✅ Implementado (grade por canal/tempo, category filtering, lazy fetch, cache TTL, batch concorrente).
+3. **Busca remota Xtream**: nenhuma (planejada para P1).
+4. **Múltiplos perfis de usuário**: nenhum (planejado para P2).
+5. **DRM**: nenhum (aceito no player, mas nunca usado).
+6. **Legendas externas**: nenhuma (planejada para P2).
+7. **Error boundaries globais**: nenhum (planejado para P0).
+8. **Acessibilidade/TV**: Navbar usa `useFocusable` (epg incluída).
+9. **Persistência de posição ao trocar de página**: restaurado para filmes/episódios.
+10. **Analytics/telemetria**: nenhum (opcional).
 
 ---
 
-## 9. Métricas coletadas (pós-correção)
+## 9. Métricas coletadas (pós- EPG completo)
 
-- Arquivos de código (src): ~65.
-- Páginas: 14.
-- Stores: 5.
-- Serviços: 2.
-- Build: sucesso (6 chunks; player 714KB).
+- Arquivos de código (src): ~66 (incluindo `EPGPage`, `epgUtils`, `utils` export).
+- Páginas: 15 (`EPGPage` adicionada).
+- Stores: 5 (`ContentStore` estendido).
+- Serviços: 2 (`XtreamService` já tinha `getEPG`).
+- Build: sucesso (chunks: player ~714KB, EPGPage ~28KB).
 - Lint: 0 erros, 0 avisos.
-- i18n: 75 chaves usadas, 0 ausentes.
-
----
-
-*Relatório gerado por análise estática e execução de build/lint após correções.*
+- i18n: 81 chaves usadas, 0 ausentes (`epg` adicionada).

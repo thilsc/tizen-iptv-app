@@ -39,6 +39,7 @@ const Navbar: React.FC<NavbarProps> = ({ className }) => {
   const navItems = [
     { label: t('navigation.home'), path: '/' },
     { label: t('navigation.liveTV'), path: '/live' },
+    { label: t('navigation.epg'), path: '/epg' },
     { label: t('navigation.movies'), path: '/movies' },
     { label: t('navigation.series'), path: '/series' },
     { label: t('navigation.favorites'), path: '/favorites' },

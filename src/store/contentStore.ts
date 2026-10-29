@@ -10,6 +10,59 @@ import {
   Episode
 } from '../types';
 import xtreamService from '../services/xtreamService';
+import { decodeEpgText, toEpgTimestamp } from '../utils';
+
+// Cache TTL for EPG responses (5 minutes)
+const EPG_CACHE_TTL = 5 * 60 * 1000;
+// Number of concurrent EPG requests per batch
+const EPG_BATCH_SIZE = 5;
+
+// In-flight EPG requests to avoid duplicate calls for the same channel
+const epgInFlight = new Map<number, Promise<EPGProgram[]>>();
+
+/**
+ * Normalize raw EPG listings: decode base64 text, coerce timestamps
+ * and sort programs by start time.
+ */
+const normalizeEpgPrograms = (
+  listings: EPGProgram[] | undefined,
+  streamId: number
+): EPGProgram[] => {
+  if (!Array.isArray(listings)) return [];
+
+  return listings
+    .map((listing, index) => {
+      const startTimestamp = toEpgTimestamp(listing.start_timestamp, listing.start);
+      const stopTimestamp = toEpgTimestamp(listing.stop_timestamp, listing.end);
+      const title = decodeEpgText(listing.title);
+
+      return {
+        ...listing,
+        id: listing.id ? String(listing.id) : `${streamId}-${index}`,
+        title: title || '—',
+        description: decodeEpgText(listing.description),
+        channel_id: listing.channel_id ? String(listing.channel_id) : String(streamId),
+        start_timestamp: startTimestamp,
+        stop_timestamp: stopTimestamp
+      };
+    })
+    .filter(program => program.start_timestamp > 0 && program.stop_timestamp > program.start_timestamp)
+    .sort((a, b) => a.start_timestamp - b.start_timestamp);
+};
+
+// Fetch full EPG for a single channel, deduplicating concurrent requests
+const fetchSingleEPG = (streamId: number): Promise<EPGProgram[]> => {
+  const inFlight = epgInFlight.get(streamId);
+  if (inFlight) return inFlight;
+
+  const request = xtreamService
+    .getEPG(streamId)
+    .then(listings => normalizeEpgPrograms(listings, streamId))
+    .finally(() => epgInFlight.delete(streamId));
+
+  epgInFlight.set(streamId, request);
+  return request;
+};
 
 interface ContentState {
   // Live TV
@@ -18,6 +71,7 @@ interface ContentState {
   liveChannels: Channel[];
   selectedLiveCategory: Category | null;
   currentEPG: Record<number, EPGProgram[]>;
+  epgLastFetched: Record<number, number>;
   channelStream: string | null;
   
   // Movies
@@ -56,6 +110,8 @@ interface ContentState {
   fetchLiveStreams: (categoryId?: string) => Promise<void>;
   setSelectedLiveCategory: (category: Category | null) => void;
   fetchShortEPG: (streamId: number) => Promise<void>;
+  fetchEPG: (streamId: number, force?: boolean) => Promise<void>;
+  fetchEPGForChannels: (streamIds: number[], force?: boolean) => Promise<void>;
   fetchChannelStream: (streamId: number) => Promise<void>;
   
   fetchMovieCategories: () => Promise<void>;
@@ -82,6 +138,7 @@ const useContentStore = create<ContentState>((set, get) => ({
   liveChannels: [],
   selectedLiveCategory: null,
   currentEPG: {},
+  epgLastFetched: {},
   channelStream: null,
   
   movieCategories: [],
@@ -151,7 +208,7 @@ const useContentStore = create<ContentState>((set, get) => ({
     try {
       const epg = await xtreamService.getShortEPG(streamId);
       set(state => ({ 
-        currentEPG: { ...state.currentEPG, [streamId]: epg },
+        currentEPG: { ...state.currentEPG, [streamId]: normalizeEpgPrograms(epg, streamId) },
         isLoadingEPG: false 
       }));
     } catch (error) {
@@ -160,6 +217,81 @@ const useContentStore = create<ContentState>((set, get) => ({
         epgError: error instanceof Error ? error.message : 'Failed to fetch EPG' 
       });
     }
+  },
+  
+  // Full EPG for a single channel (cached)
+  fetchEPG: async (streamId: number, force = false) => {
+    const { currentEPG, epgLastFetched } = get();
+    const isCached =
+      !!currentEPG[streamId] &&
+      Date.now() - (epgLastFetched[streamId] ?? 0) < EPG_CACHE_TTL;
+    if (!force && isCached) return;
+
+    set({ isLoadingEPG: true, epgError: null });
+    try {
+      const programs = await fetchSingleEPG(streamId);
+      set(state => ({
+        currentEPG: { ...state.currentEPG, [streamId]: programs },
+        epgLastFetched: { ...state.epgLastFetched, [streamId]: Date.now() },
+        isLoadingEPG: false
+      }));
+    } catch (error) {
+      set({
+        isLoadingEPG: false,
+        epgError: error instanceof Error ? error.message : 'Failed to fetch EPG'
+      });
+    }
+  },
+  
+  // Full EPG for multiple channels, fetched in small concurrent batches
+  fetchEPGForChannels: async (streamIds: number[], force = false) => {
+    const { currentEPG, epgLastFetched } = get();
+    const now = Date.now();
+    const targets = Array.from(new Set(streamIds)).filter(streamId =>
+      force || !currentEPG[streamId] || now - (epgLastFetched[streamId] ?? 0) >= EPG_CACHE_TTL
+    );
+    if (targets.length === 0) return;
+
+    set({ isLoadingEPG: true, epgError: null });
+
+    let failed = 0;
+    let lastError: string | null = null;
+
+    for (let i = 0; i < targets.length; i += EPG_BATCH_SIZE) {
+      const batch = targets.slice(i, i + EPG_BATCH_SIZE);
+      const results = await Promise.allSettled(
+        batch.map(streamId => fetchSingleEPG(streamId))
+      );
+
+      const programsUpdate: Record<number, EPGProgram[]> = {};
+      const fetchedAtUpdate: Record<number, number> = {};
+
+      results.forEach((result, index) => {
+        const streamId = batch[index];
+        if (result.status === 'fulfilled') {
+          programsUpdate[streamId] = result.value;
+          fetchedAtUpdate[streamId] = Date.now();
+        } else {
+          failed += 1;
+          lastError = result.reason instanceof Error
+            ? result.reason.message
+            : 'Failed to fetch EPG';
+        }
+      });
+
+      if (Object.keys(programsUpdate).length > 0) {
+        set(state => ({
+          currentEPG: { ...state.currentEPG, ...programsUpdate },
+          epgLastFetched: { ...state.epgLastFetched, ...fetchedAtUpdate }
+        }));
+      }
+    }
+
+    set({
+      isLoadingEPG: false,
+      // Only surface an error when every request failed
+      epgError: failed === targets.length && lastError ? lastError : null
+    });
   },
   
   // Movies actions
@@ -367,6 +499,7 @@ const useContentStore = create<ContentState>((set, get) => ({
       liveChannels: [],
       selectedLiveCategory: null,
       currentEPG: {},
+      epgLastFetched: {},
       channelStream: null,
       
       movieCategories: [],

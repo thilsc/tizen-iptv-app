@@ -6,6 +6,7 @@ import { useAuthStore, useSettingsStore, useContentStore } from './store';
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LiveTVPage = lazy(() => import('./pages/LiveTVPage'));
+const EPGPage = lazy(() => import('./pages/EPGPage'));
 const MoviesPage = lazy(() => import('./pages/MoviesPage'));
 const SeriesPage = lazy(() => import('./pages/SeriesPage'));
 const MovieDetailPage = lazy(() => import('./pages/MovieDetailPage'));
@@ -109,6 +110,12 @@ const App: React.FC = () => {
             <Route path="/live/:id" element={
               <ProtectedRoute>
                 <LiveTVPlayerPage />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/epg" element={
+              <ProtectedRoute>
+                <EPGPage />
               </ProtectedRoute>
             } />
             
